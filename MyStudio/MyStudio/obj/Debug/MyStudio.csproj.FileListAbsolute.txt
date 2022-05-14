@@ -9,9 +9,4 @@ H:\Git\MyStudio\MyStudio\bin\Debug\MyStudio.pdb
 H:\Git\MyStudio\MyStudio\obj\Debug\MyStudio.exe
 H:\Git\MyStudio\MyStudio\obj\Debug\MyStudio.pdb
 H:\Git\MyStudio\MyStudio\obj\Debug\MyStudio.exe.licenses
-H:\Git\MyStudio\MyStudio\bin\Debug\Telerik.WinControls.dll
-H:\Git\MyStudio\MyStudio\bin\Debug\Telerik.WinControls.UI.dll
-H:\Git\MyStudio\MyStudio\bin\Debug\TelerikCommon.dll
-H:\Git\MyStudio\MyStudio\bin\Debug\Telerik.WinControls.xml
-H:\Git\MyStudio\MyStudio\bin\Debug\Telerik.WinControls.UI.xml
-H:\Git\MyStudio\MyStudio\obj\Debug\MyStudio.csproj.CopyComplete
+H:\Git\MyStudio\MyStudio\obj\Debug\MyStudio.TEST.resources
