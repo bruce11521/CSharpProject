@@ -134,6 +134,8 @@
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\NovelUtility.cs" />
+    <Compile Include="Model\NovelSettings.cs" />
+    <Compile Include="Model\XmlToJson.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Main.resx">

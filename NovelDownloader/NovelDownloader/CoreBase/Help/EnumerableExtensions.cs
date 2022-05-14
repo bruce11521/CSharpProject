@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -161,7 +162,7 @@ namespace NovelDownloader.CoreBase.Help
         /// </summary>
         /// <typeparam name="T">CLASS</typeparam>
         /// <returns></returns>
-        public static Dictionary<string, string> GetDictionary<T>()
+        public static Dictionary<string, string> GetClassDescriptionDictionary<T>()
             where T : class
         {
             try
@@ -183,6 +184,27 @@ namespace NovelDownloader.CoreBase.Help
                 var Dict = new Dictionary<string, string>();
                 Dict = typeof(T).GetProperties()
                 .ToDictionary(p => p.Name, p => p.GetCustomAttributes(true).Count() > 0 ? ((DescriptionAttribute)p.GetCustomAttributes(true)?.FirstOrDefault()).Description : string.Empty);
+                return Dict;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Model轉換 CLASS.DisplayName轉成Dictionary<PROPERTY_NAME, PROPERTY_DESCRIPTION>，找不到相對應的DisplayName皆會預設為string.Empoty
+        /// </summary>
+        /// <typeparam name="T">CLASS</typeparam>
+        /// <returns></returns>
+        public static Dictionary<string, string> GetClassDisplayNameDictionary<T>()
+            where T : class
+        {
+            try
+            {
+                var Dict = new Dictionary<string, string>();
+                Dict = typeof(T).GetProperties()
+                .ToDictionary(p => p.Name, p => !string.IsNullOrWhiteSpace(p.GetCustomAttribute<DisplayAttribute>().Name) ? p.GetCustomAttribute<DisplayAttribute>().Name : string.Empty);
                 return Dict;
             }
             catch

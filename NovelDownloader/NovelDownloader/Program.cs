@@ -74,7 +74,7 @@ namespace NovelDownloader
                 _utility.TXT_WriteString(filePath, ConfigurationManager.AppSettings["NOVEL_LOG"], ($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} ,Version:{VersionNumber}" + "\n\n[原始錯誤之擲出]\nMessage:" + exception.Message + "\n\nStackTrace:" + exception.StackTrace + Environment.NewLine + Environment.NewLine), false, true);
 
 
-                RadMessageBox.Show($"程式發生錯誤，已將錯誤日誌建立在程式目錄下。　　　　　　　　　　　　　　　　　　\n錯誤日誌路徑:{filePath}\\NOVEL_LOG.txt", $"[{VersionNumber}]LOGDelegate錯誤", MessageBoxButtons.OK, RadMessageIcon.Error, $"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} Version:{VersionNumber}\r\n" + "Message:" + exception.Message + "\n\nStackTrace:" + exception.StackTrace);
+                RadMessageBox.Show($"程式發生錯誤，已將錯誤日誌建立在程式目錄下。　　　　　　　　　　　　　　　　　　\n錯誤日誌路徑:\n{filePath}\\NOVEL_LOG.txt", $"[{VersionNumber}]錯誤", MessageBoxButtons.OK, RadMessageIcon.Error, $"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} Version:{VersionNumber}\r\n" + "Message:" + exception.Message + "\n\nStackTrace:" + exception.StackTrace);
 
             }
             catch (Exception e)
