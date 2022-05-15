@@ -62,6 +62,17 @@ namespace NovelDownloader.Model
         /// </summary>
         [Display(Name = "空白字元")]
         public string Content_WhiteSpace { get; set; }
+        /// <summary>
+        /// 小說名稱 起始標籤
+        /// </summary>
+        [Display(Name = "小說名稱 起始標籤")]
+        public string NovelName_Start { get; set; }
+        /// <summary>
+        /// 小說名稱 結束標籤
+        /// </summary>
+        [Display(Name = "小說名稱 結束標籤")]
+        public string NovelName_End { get; set; }
+
 
     }
     public class ShortCut_Button : NovelSettings

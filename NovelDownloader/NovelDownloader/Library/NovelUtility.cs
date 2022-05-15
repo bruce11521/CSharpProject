@@ -381,6 +381,8 @@ namespace NovelDownloader.Library
                 throw;
             }
         }
+       
+
         /// <summary>
         /// 讀取TXT
         /// </summary>

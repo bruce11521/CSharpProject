@@ -33,7 +33,10 @@ namespace NovelDownloader
         /// XML
         /// </summary>
         private XmlToJson LoadFromXmlData;
-
+        /// <summary>
+        /// 小說名稱
+        /// </summary>
+        private string NovelName_GLOBLE = "";
         /// <summary>
         /// 參數設定
         /// </summary>
@@ -41,11 +44,11 @@ namespace NovelDownloader
         /// <summary>
         /// 下載Text檔案List
         /// </summary>
-        private List<(int ThreadSearial, bool DownloadFinish, List<StringBuilder>)> DownloadNovelTextList = new List<(int ThreadSearial, bool DownloadFinish, List<StringBuilder>)>();
+        private List<(int ThreadSearial, bool DownloadFinish, List<StringBuilder> DownloadTextList)> DownloadNovelTextList = new List<(int ThreadSearial, bool DownloadFinish, List<StringBuilder> DownloadTextList)>();
         /// <summary>
         /// 下載URL List
         /// </summary>
-        private List<(int ThreadSerial, List<string>)> DownloadNovelURLList = new List<(int ThreadSerial, List<string>)>();
+        private List<(int ThreadSerial, List<string> DownloadUrl)> DownloadNovelURLList = new List<(int ThreadSerial, List<string> DownloadUrl)>();
         #region backgroundworker
         /// <summary>
         /// 多執行續序列
@@ -146,7 +149,7 @@ namespace NovelDownloader
         private void UI_Settings()
         {
 
-            if(radPageView_Main.ViewElement is RadPageViewStripElement radPageViewStripElement)
+            if (radPageView_Main.ViewElement is RadPageViewStripElement radPageViewStripElement)
             {
                 radPageViewStripElement.StripButtons = StripViewButtons.ItemList;
                 radPageViewStripElement.ShowItemCloseButton = false;
@@ -201,7 +204,7 @@ namespace NovelDownloader
                     Text = "重新讀取Xml設定至快速鍵",
                     Font = _utility.SetFontSize()
                 };
-                item0.Click += (sender ,e)=>
+                item0.Click += (sender, e) =>
                 {
                     LoadXmlFile();
                 };
@@ -226,9 +229,9 @@ namespace NovelDownloader
             }
         }
 
-        private void UI_Register  ()
+        private void UI_Register()
         {
-            radTextBoxControl_Title_Start_SearchFlag.TextChanging += (sender , e) =>
+            radTextBoxControl_Title_Start_SearchFlag.TextChanging += (sender, e) =>
             {
                 if (sender is RadTextBoxControl rtbc)
                 {
@@ -319,7 +322,7 @@ namespace NovelDownloader
         {
             try
             {
-                if(sender is RadButton rbtn)
+                if (sender is RadButton rbtn)
                 {
                     //檢測網頁參數是否填入
                     if (string.IsNullOrWhiteSpace(radTextBoxControl_Title_Start.Text) ||
@@ -327,11 +330,11 @@ namespace NovelDownloader
                         string.IsNullOrWhiteSpace(radTextBoxControl_Content_Start.Text) ||
                         string.IsNullOrWhiteSpace(radTextBoxControl_Content_End.Text))
                     {
-                        if(DialogResult.Cancel == RadMessageBox.Show($"檢測到\n" + 
+                        if (DialogResult.Cancel == RadMessageBox.Show($"檢測到\n" +
                             (string.IsNullOrWhiteSpace(radTextBoxControl_Title_Start.Text) ? "標題文字起始標籤, " : string.Empty) + Environment.NewLine +
                             (string.IsNullOrWhiteSpace(radTextBoxControl_Title_End.Text) ? "標題文字結束標籤, " : string.Empty) + Environment.NewLine +
                             (string.IsNullOrWhiteSpace(radTextBoxControl_Content_Start.Text) ? "內容文字起始標籤, " : string.Empty) + Environment.NewLine +
-                            (string.IsNullOrWhiteSpace(radTextBoxControl_Content_End.Text) ? "內容文字結束標籤" : string.Empty) + " 為空，是否繼續下載?" , "網頁參數缺失", MessageBoxButtons.OKCancel, RadMessageIcon.Question))
+                            (string.IsNullOrWhiteSpace(radTextBoxControl_Content_End.Text) ? "內容文字結束標籤" : string.Empty) + " 為空，是否繼續下載?", "網頁參數缺失", MessageBoxButtons.OKCancel, RadMessageIcon.Question))
                         {
                             return;
                         }
@@ -343,7 +346,7 @@ namespace NovelDownloader
                         Match m = regex.Match(radTextBoxControl_Title_End_SearchFlag.Text);
                         if (!m.Success)
                         {
-                            RadMessageBox.Show("非法的檔案儲存路徑，請重新選擇或輸入！","檔案儲存路徑檢測", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
+                            RadMessageBox.Show("非法的檔案儲存路徑，請重新選擇或輸入！", "檔案儲存路徑檢測", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
                             return;
                         }
                         regex = new Regex(@"^[^\/\:\*\?\""\<\>\|\,]+$");
@@ -354,7 +357,7 @@ namespace NovelDownloader
                             return;
                         }
                     }
-                    
+
 
                     switch (rbtn.Name)
                     {
@@ -418,7 +421,7 @@ namespace NovelDownloader
                             }
 
                             if (radRadioButton_ContinuedUrl.CheckState == CheckState.Unchecked &&
-                       radRadioButton_NoneContinuedUrl.CheckState == CheckState.Unchecked)
+                                radRadioButton_NoneContinuedUrl.CheckState == CheckState.Unchecked)
                             {
                                 RadMessageBox.Show("未選擇網址相關參數!", "網址相關參數缺失", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
                                 //_desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Warning, "未選擇網址相關參數!", "網址相關參數缺失", -1, AlertScreenPosition.BottomRight);
@@ -454,7 +457,7 @@ namespace NovelDownloader
                                             DownloadUrlList = new List<string>();
                                             for (decimal index = pageStart; index <= pageEnd; index++)
                                             {
-                                                DownloadUrlList.Add(radTextBoxControl_Url.Text + index + "." + radTextBoxControl_PageType.Text);
+                                                DownloadUrlList.Add(radTextBoxControl_Url.Text + "/" + index + "." + radTextBoxControl_PageType.Text);
                                             }
                                             _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, $"共{PageCount + 1}章.", "小說章節總數", -1, AlertScreenPosition.BottomRight);
                                         }
@@ -488,14 +491,17 @@ namespace NovelDownloader
                                     {
                                         urlStr += item + Environment.NewLine;
                                     }
-                                    radTextBoxControl_Url.Text = urlStr;
+                                    //radTextBoxControl_Url.Text = urlStr;
                                     BindSettings();
 
-                                    var URLList = radTextBoxControl_Url.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                                    var URLList = urlStr.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                                    //預設核心數(不可小於3)
+                                    var ThreadCore = 16;
+
                                     if (URLList.Length > 0)
                                     {
-                                        var ListCountMod = URLList.Length % 15; //算出餘數 
-                                        var ListCount = (URLList.Length - ListCountMod) / 15;//平均每個Thread下載的URL,第16個拿來下載餘數
+                                        var ListCountMod = URLList.Length % (ThreadCore - 1); //算出餘數 
+                                        var ListCount = (URLList.Length - ListCountMod) / (ThreadCore - 1);//平均每個Thread下載的URL,第16個拿來下載餘數
 
                                         DownloadNovelURLList = new List<(int ThreadSerial, List<string>)>();
 
@@ -513,21 +519,59 @@ namespace NovelDownloader
                                         }
                                         DownloadNovelURLList.Add((threadNum, downloadURLList.ToList())); //第15個Thread
                                         downloadURLList = new List<string>();
-                                        for (var i = ListCount * 15; i < URLList.Length; i++)
+                                        for (var i = ListCount * (ThreadCore - 1); i < URLList.Length; i++)
                                         {
                                             downloadURLList.Add(URLList[i]);
                                         }
                                         DownloadNovelURLList.Add((threadNum + 1, downloadURLList.ToList())); //第16個Thread
 
 
+                                        DownloadNovelTextList = new List<(int ThreadSearial, bool DownloadFinish, List<StringBuilder> DownloadTextList)>();
+                                        //初始化
+                                        for (int it = 1; it <= (ThreadCore); it++)
+                                        {
+                                            DownloadNovelTextList.Add((it, false, new List<StringBuilder>(8192)));
+                                        }
 
-                                        var ss = "";
+                                        List<LoadingThread> loadingThreads = new List<LoadingThread>()
+                                        {
+                                            LoadingThread.Thread1,
+                                            LoadingThread.Thread2,
+                                            LoadingThread.Thread3,
+                                            LoadingThread.Thread4,
+                                            LoadingThread.Thread5,
+                                            LoadingThread.Thread6,
+                                            LoadingThread.Thread7,
+                                            LoadingThread.Thread8,
+                                            LoadingThread.Thread9,
+                                            LoadingThread.Thread10,
+                                            LoadingThread.Thread11,
+                                            LoadingThread.Thread12,
+                                            LoadingThread.Thread13,
+                                            LoadingThread.Thread14,
+                                            LoadingThread.Thread15,
+                                            LoadingThread.Thread16
+                                        };
+                                        bgw_DownloadQuery = new BackgroundWorker[loadingThreads.Count()];
+                                        for (int i = 0; i < loadingThreads.Count(); i++)
+                                        {
+                                            bgw_DownloadQuery[i] = new BackgroundWorker();
+                                            bgw_DownloadQuery[i].WorkerReportsProgress = true;
+                                            bgw_DownloadQuery[i].DoWork += new DoWorkEventHandler(Bgw_Download_Dowork);
+                                            bgw_DownloadQuery[i].ProgressChanged += new ProgressChangedEventHandler(Bgw_Download_ProgressChanged);
+                                            bgw_DownloadQuery[i].RunWorkerCompleted += new RunWorkerCompletedEventHandler(Bgw_Download_RunWorkerCompleted);
+                                            bgw_DownloadQuery[i].WorkerSupportsCancellation = true;
+                                            bgw_DownloadQuery[i].RunWorkerAsync(loadingThreads[i]);
+                                        }
+
+
+
                                     }
 
 
 
 
-                                    radTextBoxControl_PreviewText.Text = RegexHtmlElement(radTextBoxControl_TESTINPUT.Text);
+                                    //radTextBoxControl_PreviewText.Text = RegexHtmlElement(radTextBoxControl_TESTINPUT.Text);
 
                                     //HttpWebRequest request = WebRequest.Create(urlStr) as HttpWebRequest;
                                     //if (request != null)
@@ -676,12 +720,12 @@ namespace NovelDownloader
                     }
 
 
-                    
+
                 }
 
 
 
-                
+
 
                 //if (!DownloadUrlList.Any())
                 //{
@@ -695,7 +739,7 @@ namespace NovelDownloader
                 //    {
                 //        urlStr += item + Environment.NewLine;
                 //    }
-                    
+
                 //    BindSettings();
 
                 //    radTextBoxControl_PreviewText.Text = RegexHtmlElement(radTextBoxControl_TESTINPUT.Text);
@@ -715,8 +759,8 @@ namespace NovelDownloader
                 //    //    //    reqStream.Write(byteArray, 0, byteArray.Length);
                 //    //    //}
 
-                        
-                        
+
+
                 //    //    using (WebResponse response = request.GetResponse())
                 //    //    {
                 //    //        using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
@@ -729,10 +773,10 @@ namespace NovelDownloader
                 //    //                //radTextBoxControl_PreviewText.Text = StripHTML(resultdata);
                 //    //                _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, "TXT轉換成功!", "小說下載轉換", -1, AlertScreenPosition.BottomRight);
                 //    //            }
-                                
+
                 //    //        }
                 //    //    }
-                        
+
                 //    //}
 
 
@@ -774,9 +818,9 @@ namespace NovelDownloader
         {
             try
             {
-                if(e.UserState is LoadingThread loadingStatus)
+                if (e.UserState is LoadingThread loadingStatus)
                 {
-                    if(loadingStatus != LoadingThread.ExceptionError)
+                    if (loadingStatus != LoadingThread.ExceptionError)
                     {
                         radProgressBar_Download.Value1 = e.ProgressPercentage;
                         radProgressBar_Download.ProgressBarElement.Text = e.ProgressPercentage + "%";
@@ -817,26 +861,49 @@ namespace NovelDownloader
                             if (bgw_DownloadQuery.Any(x => x.CancellationPending == true))
                             {
                                 radLabel_Main_Status.Text = "下載失敗! 尚有資料未完成下載，請重新下載!";
-                                
-
-
                                 Cursor = Cursors.Default;
                             }
                             else
                             {
                                 radProgressBar_Download.Value1 = 100;
+                                radProgressBar_Download.ProgressBarElement.Text = "100%";
+
+                                if (DownloadNovelTextList.Any(x => x.DownloadFinish))
+                                {
+                                    //下載全部完成
+                                    var AllTextList = "";
+                                    foreach (var item in DownloadNovelTextList)
+                                    {
+                                        foreach (var strList in item.DownloadTextList)
+                                        {
+                                            AllTextList += RegexHtmlElement(strList?.ToString());
+                                        }
+                                    }
+                                    if (radTextBoxControl_SaveFilePath.Text.Contains(Directory.GetCurrentDirectory()))
+                                    {
+                                        var indexofPath = radTextBoxControl_SaveFilePath.Text.IndexOf(Directory.GetCurrentDirectory());
+                                        if (indexofPath != -1)
+                                        {
+                                            var FileName = radTextBoxControl_SaveFilePath.Text.Substring(indexofPath, radTextBoxControl_SaveFilePath.Text.Length - indexofPath);
+                                            _utility.TXT_WriteStringArray(Directory.GetCurrentDirectory(), FileName, AllTextList.Split(new string[] { Environment.NewLine }, StringSplitOptions.None), false, true);
+                                        }
+                                    }
+
+                                    
+                                }
+
                                 radLabel_Main_Status.Text = "下載完成! 已經輸出成TXT檔案!";
                                 Cursor = Cursors.Default;
                             }
-                            
+
                         }
                     }
                 }
                 else
                 {
                     //_desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, $"健保IC卡一次讀取\r\n總共執行{_soapFunc.TimeDifferent(ReadDTStart, ReadDTEnd, true, "健保IC卡一次讀取")}", "讀取時間", 5, AlertScreenPosition.BottomRight);
-                    radLabel_Main_Status.Text = "下載失敗! 尚有資料未完成下載，請重新下載!"; 
-                    
+                    radLabel_Main_Status.Text = "下載失敗! 尚有資料未完成下載，請重新下載!";
+
                     Cursor = Cursors.Default;
 
                 }
@@ -855,45 +922,50 @@ namespace NovelDownloader
                 {
                     loadingThread = LT;
                 }
-                if(loadingThread != LoadingThread.ExceptionError)
+                if (loadingThread != LoadingThread.ExceptionError)
                 {
-                    switch (loadingThread)
-                    {
-                        case LoadingThread.Thread1:
-                            break;
-                        case LoadingThread.Thread2:
-                            break;
-                        case LoadingThread.Thread3:
-                            break;
-                        case LoadingThread.Thread4:
-                            break;
-                        case LoadingThread.Thread5:
-                            break;
-                        case LoadingThread.Thread6:
-                            break;
-                        case LoadingThread.Thread7:
-                            break;
-                        case LoadingThread.Thread8:
-                            break;
-                        case LoadingThread.Thread9:
-                            break;
-                        case LoadingThread.Thread10:
-                            break;
-                        case LoadingThread.Thread11:
-                            break;
-                        case LoadingThread.Thread12:
-                            break;
-                        case LoadingThread.Thread13:
-                            break;
-                        case LoadingThread.Thread14:
-                            break;
-                        case LoadingThread.Thread15:
-                            break;
-                        case LoadingThread.Thread16:
-                            break;
-                        default:
-                            break;
-                    }
+
+
+                    DownloadNovelTextList.Where(x => x.ThreadSearial == loadingThread.ToNumberValue()).ToList().ForEach(x => x.DownloadFinish = true);
+
+                    //switch (loadingThread)
+                    //{
+                    //    case LoadingThread.Thread1:
+
+                    //        break;
+                    //    case LoadingThread.Thread2:
+                    //        break;
+                    //    case LoadingThread.Thread3:
+                    //        break;
+                    //    case LoadingThread.Thread4:
+                    //        break;
+                    //    case LoadingThread.Thread5:
+                    //        break;
+                    //    case LoadingThread.Thread6:
+                    //        break;
+                    //    case LoadingThread.Thread7:
+                    //        break;
+                    //    case LoadingThread.Thread8:
+                    //        break;
+                    //    case LoadingThread.Thread9:
+                    //        break;
+                    //    case LoadingThread.Thread10:
+                    //        break;
+                    //    case LoadingThread.Thread11:
+                    //        break;
+                    //    case LoadingThread.Thread12:
+                    //        break;
+                    //    case LoadingThread.Thread13:
+                    //        break;
+                    //    case LoadingThread.Thread14:
+                    //        break;
+                    //    case LoadingThread.Thread15:
+                    //        break;
+                    //    case LoadingThread.Thread16:
+                    //        break;
+                    //    default:
+                    //        break;
+                    //}
                 }
             }
             catch
@@ -903,75 +975,91 @@ namespace NovelDownloader
         }
         private void NovelDownloadProcess(LoadingThread loadingThread)
         {
-            switch (loadingThread)
+            try
             {
-                case LoadingThread.Thread1:
-                    //HttpWebRequest request = WebRequest.Create(urlStr) as HttpWebRequest;
-                    //if (request != null)
-                    //{
-                    //    request.Method = "GET";
-                    //    request.ContentType = "text/html; charset=UTF-8";
-                    //    //request.Accept = "application/json";
-                    //    request.Timeout = 30000;
-                    //    using (WebResponse response = request.GetResponse())
-                    //    {
-                    //        using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                    //        {
-                    //            var resultdata = sr.ReadToEnd();
-                    //            if (!string.IsNullOrWhiteSpace(resultdata))
-                    //            {
+                switch (loadingThread)
+                {
+                    case LoadingThread.Thread1:
+                    case LoadingThread.Thread2:
+                    case LoadingThread.Thread3:
+                    case LoadingThread.Thread4:
+                    case LoadingThread.Thread5:
+                    case LoadingThread.Thread6:
+                    case LoadingThread.Thread7:
+                    case LoadingThread.Thread8:
+                    case LoadingThread.Thread9:
+                    case LoadingThread.Thread10:
+                    case LoadingThread.Thread11:
+                    case LoadingThread.Thread12:
+                    case LoadingThread.Thread13:
+                    case LoadingThread.Thread14:
+                    case LoadingThread.Thread15:
+                    case LoadingThread.Thread16:
+                        if (DownloadNovelURLList.Any(x => x.ThreadSerial == loadingThread.ToNumberValue()))
+                        {
+                            var DownloadListTuple = DownloadNovelURLList.Where(x => x.ThreadSerial == loadingThread.ToNumberValue()).FirstOrDefault();
 
-                    //                radTextBoxControl_PreviewText.Text = RegexHtmlElement(resultdata);
-                    //                //radTextBoxControl_PreviewText.Text = StripHTML(resultdata);
-                    //                _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, "TXT轉換成功!", "小說下載轉換", -1, AlertScreenPosition.BottomRight);
-                    //            }
+                            foreach (var item in DownloadListTuple.DownloadUrl)
+                            {
+                                Thread.Sleep(_utility.RandomNext(400, 650));
+                                try
+                                {
+                                    HttpWebRequest request = WebRequest.Create(item) as HttpWebRequest;
+                                    if (request != null)
+                                    {
+                                        request.Method = "GET";
+                                        request.ContentType = "text/html; charset=UTF-8";
+                                        //request.Accept = "application/json";
+                                        request.Timeout = 30000;
+                                        using (WebResponse response = request.GetResponse())
+                                        {
+                                            using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                                            {
+                                                var resultdata = sr.ReadToEnd();
+                                                if (!string.IsNullOrWhiteSpace(resultdata))
+                                                {
 
-                    //        }
-                    //    }
+                                                    DownloadNovelTextList.Where(x => x.ThreadSearial == loadingThread.ToNumberValue()).FirstOrDefault().DownloadTextList.Add(new StringBuilder(8192).Append(resultdata));
 
-                    //}
-                    //radTextBoxControl_PreviewText.Text = RegexHtmlElement(radTextBoxControl_TESTINPUT.Text);
-                    break;
-                case LoadingThread.Thread2:
-                    break;
-                case LoadingThread.Thread3:
-                    break;
-                case LoadingThread.Thread4:
-                    break;
-                case LoadingThread.Thread5:
-                    break;
-                case LoadingThread.Thread6:
-                    break;
-                case LoadingThread.Thread7:
-                    break;
-                case LoadingThread.Thread8:
-                    break;
-                case LoadingThread.Thread9:
-                    break;
-                case LoadingThread.Thread10:
-                    break;
-                case LoadingThread.Thread11:
-                    break;
-                case LoadingThread.Thread12:
-                    break;
-                case LoadingThread.Thread13:
-                    break;
-                case LoadingThread.Thread14:
-                    break;
-                case LoadingThread.Thread15:
-                    break;
-                case LoadingThread.Thread16:
-                    break;
-                default:
-                    break;
+                                                    // DownloadNovelTextList.Add( (loadingThread.ToNumberValue(), false, new StringBuilder(8192).Append(resultdata) ) );
+                                                    //radTextBoxControl_PreviewText.Text = RegexHtmlElement(resultdata);
+                                                    //radTextBoxControl_PreviewText.Text = StripHTML(resultdata);
+                                                    //_desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, "TXT轉換成功!", "小說下載轉換", -1, AlertScreenPosition.BottomRight);
+                                                }
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                catch
+                                {
+                                    throw;
+                                }
+
+                            }
+
+
+                        }
+                        break;
+                    default:
+                        break;
+
+
+                }
             }
+            catch
+            {
+                throw;
+            }
+
         }
 
 
         #region Task 
 
-        
-       
+
+
 
         #endregion
         private string RegexHtmlElement(string HTML)
@@ -980,7 +1068,8 @@ namespace NovelDownloader
             {
                 int indexOfTitleStart = -1, indexOfTitleEnd = -1;
                 int indexOfContentStart = -1, indexOfContentEnd = -1;
-                string Title = "", Content = "";
+                int indexOfNovelNameStart = -1, indexOfNovelNameEnd = -1;
+                string NovelName = "", Title = "", Content = "";
                 if (!string.IsNullOrWhiteSpace(HTML))
                 {
                     var SearchStartPosition = 0;
@@ -1011,15 +1100,40 @@ namespace NovelDownloader
                     }
                     indexOfContentEnd = SearchStartPosition;
 
+                    if (string.IsNullOrWhiteSpace(NovelName_GLOBLE))
+                    {
+                        SearchStartPosition = 0;
+                        indexOfNovelNameStart = HTML.IndexOf(Settings.NovelName_Start, SearchStartPosition);
+
+                        SearchStartPosition = 0;
+                        indexOfNovelNameEnd = HTML.IndexOf(Settings.NovelName_End, SearchStartPosition);
+
+                    }
+
 
                     //indexOfTitleStart = HTML.IndexOf(Settings.Title_Start);
                     //indexOfTitleEnd = HTML.IndexOf(Settings.Title_End, indexOfTitleStart != -1 ? indexOfTitleStart : 0);
                     //indexOfContentStart = HTML.IndexOf(Settings.Content_Start);
                     //indexOfContentEnd = HTML.IndexOf(Settings.Content_End, indexOfContentStart != -1 ? indexOfContentStart : 0);
-
-                    if(indexOfTitleStart != -1 && indexOfTitleEnd != -1)
+                    if (string.IsNullOrWhiteSpace(NovelName_GLOBLE))
                     {
-                        if(indexOfTitleEnd - indexOfTitleStart > 0)
+                        if (indexOfNovelNameStart != -1 && indexOfNovelNameEnd != -1)
+                        {
+                            if (indexOfNovelNameEnd - indexOfNovelNameStart > 0)
+                            {
+                                NovelName = HTML.Substring(indexOfNovelNameStart + Settings.NovelName_Start.Length, (indexOfNovelNameEnd - indexOfNovelNameStart) - Settings.NovelName_Start.Length);
+                            }
+                            else
+                            {
+                                NovelName = HTML.Substring(indexOfNovelNameStart, 10);
+                            }
+                            NovelName_GLOBLE = NovelName;
+                        }
+                    }
+                        
+                    if (indexOfTitleStart != -1 && indexOfTitleEnd != -1)
+                    {
+                        if (indexOfTitleEnd - indexOfTitleStart > 0)
                         {
                             Title = HTML.Substring(indexOfTitleStart + Settings.Title_Start.Length, (indexOfTitleEnd - indexOfTitleStart) - Settings.Title_Start.Length);
                         }
@@ -1032,17 +1146,17 @@ namespace NovelDownloader
                     {
                         if (indexOfContentEnd - indexOfContentStart > 0)
                         {
-                            Content = HTML.Substring(indexOfContentStart + Settings.Content_Start.Length, (indexOfContentEnd - indexOfContentStart)- Settings.Content_Start.Length);
+                            Content = HTML.Substring(indexOfContentStart + Settings.Content_Start.Length, (indexOfContentEnd - indexOfContentStart) - Settings.Content_Start.Length);
 
                             List<string> NewLineList = new List<string>();
                             if (!string.IsNullOrWhiteSpace(Settings.Content_NewLine))
                             {
                                 var temp = Settings.Content_NewLine.Split(',');
-                                if(temp.Length > 0)
+                                if (temp.Length > 0)
                                 {
                                     NewLineList.AddRange(temp);
                                 }
-                                
+
                             }
                             List<string> WhiteSpaceList = new List<string>();
                             if (!string.IsNullOrWhiteSpace(Settings.Content_WhiteSpace))
@@ -1082,12 +1196,12 @@ namespace NovelDownloader
         {
             try
             {
-                if(sender is RadButton rbtn)
+                if (sender is RadButton rbtn)
                 {
                     var SplitName = rbtn.Name.Split('_');
-                    if(SplitName.Length == 3)
+                    if (SplitName.Length == 3)
                     {
-                        if (LoadFromXmlData.HTML_SHORTCUT_SETTINGS.ShortCutButton.Any(x=>x.ButtonSerialNumber.ToString() == SplitName[2]))
+                        if (LoadFromXmlData.HTML_SHORTCUT_SETTINGS.ShortCutButton.Any(x => x.ButtonSerialNumber.ToString() == SplitName[2]))
                         {
                             var XmlData = LoadFromXmlData.HTML_SHORTCUT_SETTINGS.ShortCutButton.Where(x => x.ButtonSerialNumber.ToString() == SplitName[2]).FirstOrDefault();
                             radRadioButton_ContinuedUrl.CheckState = CheckState.Checked;
@@ -1103,6 +1217,8 @@ namespace NovelDownloader
                             radTextBoxControl_Content_End_SearchFlag.Text = XmlData.Content_End_SerachFlag.ToString();
                             radTextBoxControl_Content_NewLine.Text = XmlData.Content_NewLine;
                             radTextBoxControl_Content_WhiteSpace.Text = XmlData.Content_WhiteSpace;
+                            Settings.NovelName_Start = XmlData.NovelName_Start;
+                            Settings.NovelName_End = XmlData.NovelName_End;
                             //BindSettings();
                         }
                     }
@@ -1122,13 +1238,16 @@ namespace NovelDownloader
             Settings.Title_Start = radTextBoxControl_Title_Start.Text;
             Settings.Title_Start_SerachFlag = int.TryParse(radTextBoxControl_Title_Start_SearchFlag.Text, out int titleStart) ? (titleStart > 0 ? titleStart : 1) : 1;
             Settings.Title_End = radTextBoxControl_Title_End.Text;
-            Settings.Title_End_SerachFlag = int.TryParse(radTextBoxControl_Title_Start_SearchFlag.Text, out int titleEnd) ? (titleEnd > 0 ? titleEnd : 1) : 1; 
+            Settings.Title_End_SerachFlag = int.TryParse(radTextBoxControl_Title_Start_SearchFlag.Text, out int titleEnd) ? (titleEnd > 0 ? titleEnd : 1) : 1;
             Settings.Content_Start = radTextBoxControl_Content_Start.Text;
-            Settings.Content_Start_SerachFlag = int.TryParse(radTextBoxControl_Content_Start_SearchFlag.Text, out int contentStart) ? (contentStart > 0 ? contentStart : 1) : 1; 
+            Settings.Content_Start_SerachFlag = int.TryParse(radTextBoxControl_Content_Start_SearchFlag.Text, out int contentStart) ? (contentStart > 0 ? contentStart : 1) : 1;
             Settings.Content_End = radTextBoxControl_Content_End.Text;
             Settings.Content_End_SerachFlag = int.TryParse(radTextBoxControl_Content_End_SearchFlag.Text, out int contentEnd) ? (contentEnd > 0 ? contentEnd : 1) : 1;
             Settings.Content_NewLine = radTextBoxControl_Content_NewLine.Text;
             Settings.Content_WhiteSpace = radTextBoxControl_Content_WhiteSpace.Text;
+            Settings.NovelName_Start = radTextBoxControl_NovelName_Start.Text;
+            Settings.NovelName_End = radTextBoxControl_NovelName_End.Text;
+
         }
 
         #region XML 
@@ -1139,7 +1258,7 @@ namespace NovelDownloader
                 XmlDocument xmlDoc = new XmlDocument();
                 var defaultPath = Environment.CurrentDirectory;
                 var defaultFileName = "NovelDownload_Settings.xml";
-                if (File.Exists(defaultPath + "\\"+ defaultFileName))
+                if (File.Exists(defaultPath + "\\" + defaultFileName))
                 {
                     xmlDoc.Load(defaultPath + "\\" + defaultFileName);
                     XmlNode SHORTCUT_SETTINGS_Node = xmlDoc.SelectSingleNode($"//HTML_SHORTCUT_SETTINGS");
@@ -1150,7 +1269,7 @@ namespace NovelDownloader
 
                     var Temp = _utility.GetAllControl(this, typeof(RadButton));
 
-                    foreach(RadButton item in Temp)
+                    foreach (RadButton item in Temp)
                     {
                         if (item.Name.Contains("radButton_DefaultSettings"))
                         {
@@ -1161,14 +1280,14 @@ namespace NovelDownloader
 
 
                     var xml = JsonConvert.DeserializeObject<XmlToJson>(jsonText);
-                    if(xml != null)
+                    if (xml != null)
                     {
                         LoadFromXmlData = new XmlToJson();
                         LoadFromXmlData = xml;
                         foreach (var item in xml.HTML_SHORTCUT_SETTINGS.ShortCutButton)
                         {
-                            
-                            if(DefaultButtonList.Any(x=>x.Name.Split('_')[2] == item.ButtonSerialNumber.ToString()))
+
+                            if (DefaultButtonList.Any(x => x.Name.Split('_')[2] == item.ButtonSerialNumber.ToString()))
                             {
                                 var btn = DefaultButtonList.Where(x => x.Name.Split('_')[2] == item.ButtonSerialNumber.ToString()).FirstOrDefault();
                                 btn.Text = item.ButtonName;
@@ -1208,11 +1327,11 @@ namespace NovelDownloader
 
                 var NovelList = DefaultNovelXmlSettings();
 
-                for(int i = 1;i < NovelList.Count + 1; i++)
+                for (int i = 1; i < NovelList.Count + 1; i++)
                 {
-                   
+
                     XmlElement HTML_SHORTCUT_BTN_ELement = CreateNode(xmlDoc, HTML_SHORTCUT_Element, $"ShortCutButton", "");
-                    CreateButtonSettings(xmlDoc, HTML_SHORTCUT_BTN_ELement, NovelList[i-1]);
+                    CreateButtonSettings(xmlDoc, HTML_SHORTCUT_BTN_ELement, NovelList[i - 1]);
                 }
                 //var HTML_SHORTCUT_BTN1_ELement = CreateNode(xmlDoc, HTML_SHORTCUT_Element, "ShortCutButton1", "");
                 //var HTML_SHORTCUT_BTN2_ELement = CreateNode(xmlDoc, HTML_SHORTCUT_Element, "ShortCutButton2", "");
@@ -1242,7 +1361,7 @@ namespace NovelDownloader
 
                 if (File.Exists(defaultPath + "\\" + defaultFileName))
                 {
-                    if(DialogResult.Yes == RadMessageBox.Show("NovelDownload_Settings.xml 設定檔存在，是否覆蓋?", "檔案覆蓋詢問",MessageBoxButtons.YesNo, RadMessageIcon.Question))
+                    if (DialogResult.Yes == RadMessageBox.Show("NovelDownload_Settings.xml 設定檔存在，是否覆蓋?", "檔案覆蓋詢問", MessageBoxButtons.YesNo, RadMessageIcon.Question))
                     {
                         xmlDoc.Save(defaultPath + "\\" + defaultFileName);
                     }
@@ -1252,16 +1371,16 @@ namespace NovelDownloader
                     xmlDoc.Save(defaultPath + "\\" + defaultFileName);
                 }
                 _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, $"xml產生成功!\n\n路徑:\n{defaultPath + "\\" + defaultFileName}", "XML產出", -1, AlertScreenPosition.BottomRight);
-               
+
             }
             catch
             {
                 throw;
             }
         }
-        private void CreateButtonSettings(XmlDocument xmlDoc,XmlElement ButtonData, ShortCut_Button NovelData)
+        private void CreateButtonSettings(XmlDocument xmlDoc, XmlElement ButtonData, ShortCut_Button NovelData)
         {
-            if(NovelData != null)
+            if (NovelData != null)
             {
                 CreateNode(xmlDoc, ButtonData, nameof(NovelData.ButtonSerialNumber), NovelData.ButtonSerialNumber.ToString());
                 CreateNode(xmlDoc, ButtonData, nameof(NovelData.ButtonName), NovelData.ButtonName);
@@ -1278,6 +1397,9 @@ namespace NovelDownloader
                 CreateNode(xmlDoc, ButtonData, nameof(NovelData.Content_WhiteSpace), NovelData.Content_WhiteSpace);
                 CreateNode(xmlDoc, ButtonData, nameof(NovelData.PageType), NovelData.PageType);
                 CreateNode(xmlDoc, ButtonData, nameof(NovelData.NovelTextFileSavePath), NovelData.NovelTextFileSavePath);
+                CreateNode(xmlDoc, ButtonData, nameof(NovelData.NovelName_Start), NovelData.NovelName_Start);
+                CreateNode(xmlDoc, ButtonData, nameof(NovelData.NovelName_End), NovelData.NovelName_End);
+
             }
         }
         /// <summary>
@@ -1304,6 +1426,8 @@ namespace NovelDownloader
                 Content_End_SerachFlag = 1,
                 Content_NewLine = @"</p>",
                 Content_WhiteSpace = @"<p>,<!--PAGE 1-->,<!--PAGE 2-->,<!--PAGE 3-->,<!--PAGE 4-->,<!--PAGE 5-->",
+                NovelName_Start = @"<span>",
+                NovelName_End = @"</span>"
             };
             ShortCut_Button rbtn2 = new ShortCut_Button()
             {
@@ -1322,13 +1446,15 @@ namespace NovelDownloader
                 Content_End_SerachFlag = 1,
                 Content_NewLine = @"</p>",
                 Content_WhiteSpace = @"<p>,",
+                NovelName_Start = @"<div class=""info"">",
+                NovelName_End = @"<span itemprop=""author"">"
             };
             NovelList.Add(rbtn1);
             NovelList.Add(rbtn2);
             var str = " ";
-            for(var i= NovelList.Count+1; i <= 10; i++)
+            for (var i = NovelList.Count + 1; i <= 10; i++)
             {
-                NovelList.Add(new ShortCut_Button() 
+                NovelList.Add(new ShortCut_Button()
                 {
                     ButtonSerialNumber = i,
                     ButtonName = $"預設值{i}",
@@ -1345,6 +1471,8 @@ namespace NovelDownloader
                     Content_End_SerachFlag = 1,
                     Content_NewLine = str,
                     Content_WhiteSpace = str,
+                    NovelName_Start = str,
+                    NovelName_End = str,
                 });
             }
             return NovelList;
