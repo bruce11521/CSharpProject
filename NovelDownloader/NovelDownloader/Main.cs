@@ -112,10 +112,16 @@ namespace NovelDownloader
                 _utility.radMsgboxFont();
                 _utility.SetControlFont(this);
 
-                this.Text = "NovelDownloader" + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+                this.Text = "NovelDownloader " + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
                 this.Font = _utility.SetFontSize(12);
 
-                radLabel_Version.Text = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion; ;
+                radLabel_Version.Text = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+                radLabel_Version.Font = _utility.SetFontSize(18f);
+                radLabel_Version_Title.Font = _utility.SetFontSize(20f, true);
+                radLabel_Version_LabelOfVersion.Font = _utility.SetFontSize(18f);
+                radLabel_Version_CopyRight.Font = _utility.SetFontSize(20f);
+
+
 
                 UI_Settings();
                 UI_Register();
