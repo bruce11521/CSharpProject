@@ -118,13 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="radTextBoxControl_Url.NullText" xml:space="preserve">
-    <value>連續網址範例[ http://big5.quanben5.com/n/yishiyaoshen/19651.html ]
+    <value>===連續網址範例===[ http://big5.quanben5.com/n/yishiyaoshen/19651.html ]
 小說下載網址:http://big5.quanben5.com/n/yishiyaoshen/
 起始參數:19651
 結束參數:21114
 副檔名:html
-
-非連續網址範例 
+===非連續網址範例===
 小說下載網址:http://big5.quanben5.com/n/yishiyaoshen/19651.html
 http://big5.quanben5.com/n/yishiyaoshen/19653.html
 http://big5.quanben5.com/n/yishiyaoshen/19655.html</value>

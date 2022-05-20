@@ -11,12 +11,25 @@ namespace NovelDownloader.Model
     /// </summary>
     public class XmlToJson
     {
-        public Html_Flag_Settings HTML_FLAG_SETTINGS { get; set; }
+        public SUB NovelDownloader { get; set; } 
+        //public Advance_Settings ADVANCE_SETTINGS { get; set; }
+        //public Html_Shortcut_Settings HTML_SHORTCUT_SETTINGS { get; set; }
+    }
+    public class SUB
+    {
+        /// <summary>
+        /// 進階設定
+        /// </summary>
+        public Advance_Settings ADVANCE_SETTINGS { get; set; }
+        /// <summary>
+        /// 快捷鍵設定MODEL
+        /// </summary>
         public Html_Shortcut_Settings HTML_SHORTCUT_SETTINGS { get; set; }
     }
-    public class Html_Flag_Settings
-    {
 
+    public class Advance_Settings : AdvanceSettings
+    {
+        //public AdvanceSettings Advance_Setting { get; set; }
     }
     /// <summary>
     /// 快捷鍵設定MODEL

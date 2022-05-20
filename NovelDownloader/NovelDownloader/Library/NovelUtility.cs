@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Telerik.WinControls;
+using Telerik.WinControls.FileDialogs;
+using Telerik.WinControls.Localization;
 using Telerik.WinControls.UI;
 
 namespace NovelDownloader.Library
@@ -17,6 +19,7 @@ namespace NovelDownloader.Library
     public class NovelUtility
     {
         private DesktopAlertUtil _desktopAlertUtil = new DesktopAlertUtil();
+
 
         /// <summary>
         /// RadMessageBox樣式設定
@@ -38,10 +41,364 @@ namespace NovelDownloader.Library
                 RadMessageBox.Instance.Controls["radButtonDetails"].Font = new Font(FontsProxy.Fonts[0], buttonsize, FontStyle.Regular);
                 RadMessageBox.Instance.Controls["radButtonDetails"].Size = new Size(110, 27);
                 RadMessageBox.Instance.Controls["radTextBoxDetials"].Font = new Font(FontsProxy.Fonts[0], detailsize, FontStyle.Regular);
+                RadMessageLocalizationProvider.CurrentProvider = new ResetRadMessageBoxLocalizationProvider();
                 RadMessageBox.Instance.AutoScaleMode = AutoScaleMode.None;
                 RadMessageBox.Instance.TopMost = true;
             }
         }
+
+        #region RadButton Localization 
+        /// <summary>
+        /// RadMessagebox Button 文字
+        /// </summary>
+        public class RadMessageBoxLocalizationText
+        {
+            public RadMessageBoxLocalizationText()
+            {
+                YES = "是";
+                NO = "否";
+                OK = "確認";
+                CANCEL = "取消";
+                RETRY = "重試";
+                IGNORE = "忽略";
+                ABORT = "放棄";
+                DETAILS = "詳細資訊";
+            }
+            public string YES { get; set; }
+            public string NO { get; set; }
+            public string OK { get; set; }
+            public string CANCEL { get; set; }
+            public string RETRY { get; set; }
+            public string ABORT { get; set; }
+            public string IGNORE { get; set; }
+            public string DETAILS { get; set; }
+        }
+        public class ManualRadMessageBoxLocalizationProvider : RadMessageLocalizationProvider
+        {
+            public string YesButton { get; set; }
+            public string NoButton { get; set; }
+            public string OKButton { get; set; }
+            public string CancelButton { get; set; }
+            public string RetryButton { get; set; }
+            public string IgnoreButton { get; set; }
+            public string AbortButton { get; set; }
+            public string DetailsButton { get; set; }
+            public override string GetLocalizedString(string id)
+            {
+                switch (id)
+                {
+                    case RadMessageStringID.YesButton:
+                        return YesButton;
+                    case RadMessageStringID.NoButton:
+                        return NoButton;
+                    case RadMessageStringID.OKButton:
+                        return OKButton;
+                    case RadMessageStringID.CancelButton:
+                        return CancelButton;
+                    case RadMessageStringID.RetryButton:
+                        return RetryButton;
+                    case RadMessageStringID.IgnoreButton:
+                        return IgnoreButton;
+                    case RadMessageStringID.AbortButton:
+                        return AbortButton;
+                    case RadMessageStringID.DetailsButton:
+                        return DetailsButton;
+                    default:
+                        return base.GetLocalizedString(id);
+                }
+            }
+        }
+        /// <summary>
+        /// 更改Button字詞
+        /// </summary>
+        public class ResetRadMessageBoxLocalizationProvider : RadMessageLocalizationProvider
+        {
+            //需加入這段RadMessageLocalizationProvider.CurrentProvider = new CustomRadMessageBoxLocalizationProvider();
+            public override string GetLocalizedString(string id)
+            {
+                RadMessageBoxLocalizationText SetText = new RadMessageBoxLocalizationText();
+                switch (id)
+                {
+                    case RadMessageStringID.YesButton:
+                        return SetText.YES;
+                    case RadMessageStringID.NoButton:
+                        return SetText.NO;
+                    case RadMessageStringID.OKButton:
+                        return SetText.OK;
+                    case RadMessageStringID.CancelButton:
+                        return SetText.CANCEL;
+                    case RadMessageStringID.RetryButton:
+                        return SetText.RETRY;
+                    case RadMessageStringID.IgnoreButton:
+                        return SetText.IGNORE;
+                    case RadMessageStringID.AbortButton:
+                        return SetText.ABORT;
+                    case RadMessageStringID.DetailsButton:
+                        return SetText.DETAILS;
+                    default:
+                        return base.GetLocalizedString(id);
+                }
+            }
+        }
+
+        #endregion
+        #region File Dialogs Localization 
+        public class FileDialogsLocalizationText
+        {
+            public FileDialogsLocalizationText()
+            {
+                OK = "確認";
+                Yes = "是";
+                No = "否";
+                Cancel = "取消";
+                Back = "返回";
+                Forward = "前進";
+                Up = "上一層";
+                NewFolder = "新資料夾";
+                SearchIn = "搜尋";
+                SearchResults = "搜尋結果";
+                ExtraLargeIcons = "超大圖示";
+                LargeIcons = "大圖示";
+                MediumIcons = "中圖示";
+                SmallIcons = "小圖示";
+                List = "清單";
+                Tiles = "並排";
+                Details = "詳細資料";
+                NameHeader = "名稱";
+                SizeHeader = "大小";
+                TypeHeader = "類型";
+                DateHeader = "修改日期";
+                FileSizes_B = "位元組";
+                FileSizes_GB = "GB";
+                FileSizes_KB = "KB";
+                FileSizes_MB = "MB";
+                FileSizes_TB = "TB";
+                OpenFileDialogHeader = "開啟檔案";
+                OpenFolderDialogHeader = "開啟資料夾";
+                SaveFileDialogHeader = "另存新檔";
+                FileName = "檔案名稱:";
+                Folder = "資料夾名稱:";
+                SaveAsType = "另存為...";
+                OpenFolder = "開啟資料夾";
+                FileFolderType = "檔案資料夾";
+                Cut = "剪下";
+                Copy = "複製";
+                CopyTo = "複製到...";
+                Delete = "刪除";
+                Edit = "編輯";
+                MoveTo = "移動到";
+                Open = "開啟";
+                Paste = "貼上";
+                Properties = "屬性";
+                Rename = "重新命名";
+                Save = "儲存";
+                View = "瀏覽";
+                CheckThePath = "請檢查路徑是否正確.";
+                ConfirmSave = "確認另存檔案.";
+                FileExists = "檔案已經存在.";
+                FileNameWrongCharacters = "請勿在檔案名稱中包含\\ / : * ？ \" < > |等字元.";
+                InvalidExtensionConfirmation = "是否要變更副檔名?";
+                InvalidFileName = "檔案名稱無效.";
+                InvalidOrMissingExtension = "如果變更此副檔名，可能會造成該檔案無法使用.";
+                InvalidPath = "該目錄路徑無效.";
+                OpenReadOnly = "是否以唯獨模式開啟?";
+                ReplacementQuestion = "確認是否取代該檔案?";
+            }
+            public string OK { get; set; }
+            public string Yes { get; set; }
+            public string No { get; set; }
+            public string Cancel { get; set; }
+            public string Back { get; set; }
+            public string Forward { get; set; }
+            public string Up { get; set; }
+            public string NewFolder { get; set; }
+            public string SearchIn { get; set; }
+            public string SearchResults { get; set; }
+            public string ExtraLargeIcons { get; set; }
+            public string LargeIcons { get; set; }
+            public string MediumIcons { get; set; }
+            public string SmallIcons { get; set; }
+            public string List { get; set; }
+            public string Tiles { get; set; }
+            public string Details { get; set; }
+            public string NameHeader { get; set; }
+            public string SizeHeader { get; set; }
+            public string TypeHeader { get; set; }
+            public string DateHeader { get; set; }
+            public string FileSizes_B { get; set; }
+            public string FileSizes_GB { get; set; }
+            public string FileSizes_KB { get; set; }
+            public string FileSizes_MB { get; set; }
+            public string FileSizes_TB { get; set; }
+            public string OpenFileDialogHeader { get; set; }
+            public string OpenFolderDialogHeader { get; set; }
+            public string SaveFileDialogHeader { get; set; }
+            public string FileName { get; set; }
+            public string Folder { get; set; }
+            public string SaveAsType { get; set; }
+            public string OpenFolder { get; set; }
+            public string FileFolderType { get; set; }
+            public string Cut { get; set; }
+            public string Copy { get; set; }
+            public string CopyTo { get; set; }
+            public string Delete { get; set; }
+            public string Edit { get; set; }
+            public string MoveTo { get; set; }
+            public string Open { get; set; }
+            public string Paste { get; set; }
+            public string Properties { get; set; }
+            public string Rename { get; set; }
+            public string Save { get; set; }
+            public string View { get; set; }
+            public string CheckThePath { get; set; }
+            public string ConfirmSave { get; set; }
+            public string FileExists { get; set; }
+            public string FileNameWrongCharacters { get; set; }
+            public string InvalidExtensionConfirmation { get; set; }
+            public string InvalidFileName { get; set; }
+            public string InvalidOrMissingExtension { get; set; }
+            public string InvalidPath { get; set; }
+            public string OpenReadOnly { get; set; }
+            public string ReplacementQuestion { get; set; }
+        }
+        
+        public class ManualFileDialogsLocalizationProvider : FileDialogsLocalizationProvider
+        {
+            public override string GetLocalizedString(string id)
+            {
+                FileDialogsLocalizationText SetText = new FileDialogsLocalizationText();
+                switch (id)
+                {
+                    case FileDialogsStringId.OK:
+                        return SetText.OK;
+                    case FileDialogsStringId.Yes:
+                        return SetText.Yes;
+                    case FileDialogsStringId.No:
+                        return SetText.No;
+                    case FileDialogsStringId.Cancel:
+                        return SetText.Cancel;
+
+                    case FileDialogsStringId.Back:
+                        return SetText.Back;
+                    case FileDialogsStringId.Forward:
+                        return SetText.Forward;
+                    case FileDialogsStringId.Up:
+                        return SetText.Up;
+                    case FileDialogsStringId.NewFolder:
+                        return SetText.NewFolder;
+                    case FileDialogsStringId.SearchIn:
+                        return SetText.SearchIn;
+                    case FileDialogsStringId.SearchResults:
+                        return SetText.SearchResults;
+
+                    case FileDialogsStringId.ExtraLargeIcons:
+                        return SetText.ExtraLargeIcons;
+                    case FileDialogsStringId.LargeIcons:
+                        return SetText.LargeIcons;
+                    case FileDialogsStringId.MediumIcons:
+                        return SetText.MediumIcons;
+                    case FileDialogsStringId.SmallIcons:
+                        return SetText.SmallIcons;
+                    case FileDialogsStringId.List:
+                        return SetText.List;
+                    case FileDialogsStringId.Tiles:
+                        return SetText.Tiles;
+                    case FileDialogsStringId.Details:
+                        return SetText.Details;
+
+                    case FileDialogsStringId.NameHeader:
+                        return SetText.NameHeader;
+                    case FileDialogsStringId.SizeHeader:
+                        return SetText.SizeHeader;
+                    case FileDialogsStringId.TypeHeader:
+                        return SetText.TypeHeader;
+                    case FileDialogsStringId.DateHeader:
+                        return SetText.DateHeader;
+
+                    case FileDialogsStringId.FileSizes_B:
+                        return SetText.FileSizes_B;
+                    case FileDialogsStringId.FileSizes_GB:
+                        return SetText.FileSizes_GB;
+                    case FileDialogsStringId.FileSizes_KB:
+                        return SetText.FileSizes_KB;
+                    case FileDialogsStringId.FileSizes_MB:
+                        return SetText.FileSizes_MB;
+                    case FileDialogsStringId.FileSizes_TB:
+                        return SetText.FileSizes_TB;
+
+                    case FileDialogsStringId.OpenFileDialogHeader:
+                        return SetText.OpenFileDialogHeader;
+                    case FileDialogsStringId.OpenFolderDialogHeader:
+                        return SetText.OpenFileDialogHeader;
+                    case FileDialogsStringId.SaveFileDialogHeader:
+                        return SetText.SaveFileDialogHeader;
+
+                    case FileDialogsStringId.FileName:
+                        return SetText.FileName;
+                    case FileDialogsStringId.Folder:
+                        return SetText.Folder;
+                    case FileDialogsStringId.SaveAsType:
+                        return SetText.SaveAsType;
+
+                    case FileDialogsStringId.OpenFolder:
+                        return SetText.OpenFolder;
+                    case FileDialogsStringId.FileFolderType:
+                        return SetText.FileFolderType;
+
+                    case FileDialogsStringId.Cut:
+                        return SetText.Cut;
+                    case FileDialogsStringId.Copy:
+                        return SetText.Copy;
+                    case FileDialogsStringId.CopyTo:
+                        return SetText.CopyTo;
+                    case FileDialogsStringId.Delete:
+                        return SetText.Delete;
+                    case FileDialogsStringId.Edit:
+                        return SetText.Edit;
+                    case FileDialogsStringId.MoveTo:
+                        return SetText.MoveTo;
+                    case FileDialogsStringId.Open:
+                        return SetText.Open;
+                    case FileDialogsStringId.Paste:
+                        return SetText.Paste;
+                    case FileDialogsStringId.Properties:
+                        return SetText.Properties;
+                    case FileDialogsStringId.Rename:
+                        return SetText.Rename;
+                    case FileDialogsStringId.Save:
+                        return SetText.Save;
+                    case FileDialogsStringId.View:
+                        return SetText.View;
+
+                    case FileDialogsStringId.CheckThePath:
+                        return SetText.CheckThePath;
+                    case FileDialogsStringId.ConfirmSave:
+                        return SetText.ConfirmSave;
+                    case FileDialogsStringId.FileExists:
+                        return SetText.FileExists;
+                    case FileDialogsStringId.FileNameWrongCharacters:
+                        return SetText.FileNameWrongCharacters;
+                    case FileDialogsStringId.InvalidExtensionConfirmation:
+                        return SetText.InvalidExtensionConfirmation;
+                    case FileDialogsStringId.InvalidFileName:
+                        return SetText.InvalidFileName;
+                    case FileDialogsStringId.InvalidOrMissingExtension:
+                        return SetText.InvalidOrMissingExtension;
+                    case FileDialogsStringId.InvalidPath:
+                        return SetText.InvalidPath;
+                    case FileDialogsStringId.OpenReadOnly:
+                        return SetText.OpenReadOnly;
+                    case FileDialogsStringId.ReplacementQuestion:
+                        return SetText.ReplacementQuestion;
+
+                    default:
+                        return string.Empty;
+                }
+            }
+        }
+
+        #endregion
+
 
         #region 抓取該Control全域中的所有Type
         /// <summary>
@@ -381,7 +738,7 @@ namespace NovelDownloader.Library
                 throw;
             }
         }
-       
+
 
         /// <summary>
         /// 讀取TXT

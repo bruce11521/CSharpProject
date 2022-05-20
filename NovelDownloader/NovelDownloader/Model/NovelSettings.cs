@@ -20,17 +20,17 @@ namespace NovelDownloader.Model
         /// <summary>
         /// 標題 起始 搜尋標記(遇到相同標記取第幾個)
         /// </summary>
-        [Display(Name = "小說標題 起始標籤 指定搜尋")] 
+        [Display(Name = "小說標題 起始標籤 指定搜尋")]
         public int Title_Start_SerachFlag { get; set; }
         /// <summary>
         /// 標題 結束 搜尋標記
         /// </summary>
-        [Display(Name = "小說標題 結束標籤")] 
+        [Display(Name = "小說標題 結束標籤")]
         public string Title_End { get; set; }
         /// <summary>
         /// 標題 結束 搜尋標記(遇到相同標記取第幾個)
         /// </summary>
-        [Display(Name = "小說標題 結束標籤 指定搜尋")] 
+        [Display(Name = "小說標題 結束標籤 指定搜尋")]
         public int Title_End_SerachFlag { get; set; }
         /// <summary>
         /// 內容 起始 搜尋標記
@@ -40,22 +40,22 @@ namespace NovelDownloader.Model
         /// <summary>
         /// 內容 起始 搜尋標記(遇到相同標記取第幾個)
         /// </summary>
-        [Display(Name = "小說內容 起始標籤 指定搜尋")] 
+        [Display(Name = "小說內容 起始標籤 指定搜尋")]
         public int Content_Start_SerachFlag { get; set; }
         /// <summary>
         /// 內容 結束 搜尋標記
         /// </summary>
-        [Display(Name = "小說內容 結束標籤")] 
+        [Display(Name = "小說內容 結束標籤")]
         public string Content_End { get; set; }
         /// <summary>
         /// 內容 結束 搜尋標記(遇到相同標記取第幾個)
         /// </summary>
-        [Display(Name = "小說內容 結束標籤 指定搜尋")] 
+        [Display(Name = "小說內容 結束標籤 指定搜尋")]
         public int Content_End_SerachFlag { get; set; }
         /// <summary>
         /// 跳行字元
         /// </summary>
-        [Display(Name = "跳行字元")] 
+        [Display(Name = "跳行字元")]
         public string Content_NewLine { get; set; }
         /// <summary>
         /// 空白字元
@@ -97,5 +97,16 @@ namespace NovelDownloader.Model
         /// 小說TXT儲存地址
         /// </summary>
         public string NovelTextFileSavePath { get; set; }
+    }
+    /// <summary>
+    /// 進階設定
+    /// </summary>
+    public class AdvanceSettings
+    {
+        /// <summary>
+        /// 下載作業等候逾時秒數
+        /// </summary>
+        [Display(Name = "下載作業等候逾時秒數")] 
+        public int DownloadWaitingTimeOutSeconds { get; set; }
     }
 }
