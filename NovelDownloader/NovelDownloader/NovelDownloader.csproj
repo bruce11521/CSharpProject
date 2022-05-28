@@ -152,19 +152,29 @@
     <Compile Include="CoreBase\Help\StringExtensions.cs" />
     <Compile Include="Library\DesktopAlertUtil.cs" />
     <Compile Include="Library\FontsProxy.cs" />
-    <Compile Include="Main.cs">
+    <Compile Include="Library\DropDownListUtility.cs" />
+    <Compile Include="SaveXmlForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Main.Designer.cs">
-      <DependentUpon>Main.cs</DependentUpon>
+    <Compile Include="SaveXmlForm.Designer.cs">
+      <DependentUpon>SaveXmlForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\NovelUtility.cs" />
     <Compile Include="Model\NovelSettings.cs" />
     <Compile Include="Model\XmlToJson.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
+    <EmbeddedResource Include="SaveXmlForm.resx">
+      <DependentUpon>SaveXmlForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\licenses.licx" />
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

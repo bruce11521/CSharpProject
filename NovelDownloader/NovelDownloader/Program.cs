@@ -28,7 +28,7 @@ namespace NovelDownloader
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main());
+            Application.Run(new MainForm());
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -71,10 +71,10 @@ namespace NovelDownloader
 
                 string[] str = Process.GetCurrentProcess().MainModule.FileName.Split('\\');
                 string filePath = str.Where(item => item != str[str.Length - 1]).Aggregate("", (current, item) => current + (item + '\\'));
-                _utility.TXT_WriteString(filePath, ConfigurationManager.AppSettings["NOVEL_LOG"], ($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} ,Version:{VersionNumber}" + "\n\n[原始錯誤之擲出]\nMessage:" + exception.Message + "\n\nStackTrace:" + exception.StackTrace + Environment.NewLine + Environment.NewLine), false, true);
+                _utility.TXT_WriteString(filePath, ConfigurationManager.AppSettings["NOVEL_LOG"], ($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} ,Version:{VersionNumber}" + "\n\n[原始錯誤之擲出]\nMessage:" + exception.Message + "\n\nStackTrace:" + exception.StackTrace + Environment.NewLine + Environment.NewLine), false, true);
 
 
-                RadMessageBox.Show($"程式發生錯誤，已將錯誤日誌建立在程式目錄下。　　　　　　　　　　　　　　　　　　\n錯誤日誌路徑:{filePath}\\NOVEL_LOG.txt", $"[{VersionNumber}]錯誤", MessageBoxButtons.OK, RadMessageIcon.Error, $"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} Version:{VersionNumber}\r\n" + "Message:" + exception.Message + "\n\nStackTrace:" + exception.StackTrace);
+                RadMessageBox.Show($"程式發生錯誤，已將錯誤日誌建立在程式目錄下。　　　　　　　　　　　　　　　　　　\n錯誤日誌路徑:\n{filePath}\\NOVEL_LOG.txt", $"[{VersionNumber}]錯誤", MessageBoxButtons.OK, RadMessageIcon.Error, $"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} Version:{VersionNumber}\r\n" + "Message:" + exception.Message + "\n\nStackTrace:" + exception.StackTrace);
 
             }
             catch (Exception e)
