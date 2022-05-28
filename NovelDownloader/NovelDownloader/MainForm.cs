@@ -650,7 +650,7 @@ namespace NovelDownloader
                 var CheckURLList = radTextBoxControl_Url.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 if (CheckURLList != null && CheckURLList.Length >= 1)
                 {
-                    Regex regex = new Regex(@"^(http|https)://?\S*$", RegexOptions.IgnoreCase);
+                    Regex regex = new Regex(@"^((http|https)://|www.)?\S*$", RegexOptions.IgnoreCase);
                     Match m = regex.Match(CheckURLList[0]);
                     if (!m.Success)
                     {
@@ -863,7 +863,7 @@ namespace NovelDownloader
                             }
                             if (!string.IsNullOrWhiteSpace(radTextBoxControl_PreviewUrl.Text))
                             {
-                                Regex regex = new Regex(@"^(http|https)://?\S*$", RegexOptions.IgnoreCase);
+                                Regex regex = new Regex(@"^((http|https)://|www.)?\S*$", RegexOptions.IgnoreCase);
                                 Match m = regex.Match(radTextBoxControl_PreviewUrl.Text);
                                 if (!m.Success)
                                 {
@@ -909,16 +909,20 @@ namespace NovelDownloader
                             catch(Exception ex)
                             {
                                 radLabel_Preview_Status.Text = "預覽TXT轉換失敗!";
-                                if (ex.Message == "作業逾時")
+                                if(ex.GetType() == typeof(System.Net.WebException))
                                 {
-                                    RadMessageBox.Show($"與 {radTextBoxControl_PreviewUrl.Text}\n連接逾時!請確認該網站是否存在!", "網站連接逾時", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
-                                    return;
+                                    if (ex.Message == "作業逾時")
+                                    {
+                                        RadMessageBox.Show($"與 {radTextBoxControl_PreviewUrl.Text}\n連接逾時!請確認該網站是否存在!", "網站連接逾時", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
+                                        return;
+                                    }
+                                    else if (ex.Message.Contains("遠端伺服器傳回一個錯誤: (404) 找不到。"))
+                                    {
+                                        RadMessageBox.Show($"於 {radTextBoxControl_PreviewUrl.Text} \n下找不到該網站!請確認該網址是否正確!", "網站連接逾時", MessageBoxButtons.OK, RadMessageIcon.Error);
+                                        return;
+                                    }
                                 }
-                                else if (ex.Message.Contains("遠端伺服器傳回一個錯誤: (404) 找不到。"))
-                                {
-                                    RadMessageBox.Show($"於 {radTextBoxControl_PreviewUrl.Text} \n下找不到該網站!請確認該網址是否正確!", "網站連接逾時", MessageBoxButtons.OK, RadMessageIcon.Error);
-                                    return;
-                                }
+                                
                                 throw;
                             }
                             finally
@@ -935,7 +939,7 @@ namespace NovelDownloader
                             var CheckURLList = radTextBoxControl_Url.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                             if (CheckURLList != null && CheckURLList.Length > 0)
                             {
-                                Regex regex = new Regex(@"^(http|https)://?\S*$", RegexOptions.IgnoreCase);
+                                Regex regex = new Regex(@"^((http|https)://|www.)?\S*$", RegexOptions.IgnoreCase);
                                 var ErrorUrlMsg = "";
                                 int ErrorCount = 0;
                                 foreach (var url in CheckURLList)
@@ -1587,14 +1591,14 @@ namespace NovelDownloader
                     {
                         for (int TS = 0; TS < Settings.NovelName_Start_SearchFlag; TS++)
                         {
-                            SearchStartPosition = HTML.IndexOf(Settings.NovelName_Start, SearchStartPosition);
+                            SearchStartPosition = HTML.IndexOf(Settings.NovelName_Start, SearchStartPosition+1);
                         }
                         if (SearchStartPosition == -1)
                         {
                             return EmptyStr;
                         }
                         indexOfNovelNameStart = SearchStartPosition;
-                        SearchStartPosition = HTML.IndexOf(Settings.NovelName_End, SearchStartPosition);
+                        SearchStartPosition = HTML.IndexOf(Settings.NovelName_End, SearchStartPosition+1);
                         if (SearchStartPosition == -1)
                         {
                             return EmptyStr;
@@ -1605,14 +1609,14 @@ namespace NovelDownloader
                     SearchStartPosition = 0;
                     for (int TS = 0; TS < Settings.Title_Start_SearchFlag; TS++)
                     {
-                        SearchStartPosition = HTML.IndexOf(Settings.Title_Start, SearchStartPosition);
+                        SearchStartPosition = HTML.IndexOf(Settings.Title_Start, SearchStartPosition+1);
                     }
                     if (SearchStartPosition == -1)
                     {
                         return EmptyStr;
                     }
                     indexOfTitleStart = SearchStartPosition;
-                    SearchStartPosition = HTML.IndexOf(Settings.Title_End, SearchStartPosition);
+                    SearchStartPosition = HTML.IndexOf(Settings.Title_End, SearchStartPosition+1);
                     if (SearchStartPosition == -1)
                     {
                         return EmptyStr;
@@ -1622,7 +1626,7 @@ namespace NovelDownloader
                     SearchStartPosition = 0;
                     for (int TS = 0; TS < Settings.Content_Start_SearchFlag; TS++)
                     {
-                        SearchStartPosition = HTML.IndexOf(Settings.Content_Start, SearchStartPosition);
+                        SearchStartPosition = HTML.IndexOf(Settings.Content_Start, SearchStartPosition+1);
                     }
                     if (SearchStartPosition == -1)
                     {
@@ -1630,7 +1634,7 @@ namespace NovelDownloader
                     }
                     indexOfContentStart = SearchStartPosition;
 
-                    SearchStartPosition = HTML.IndexOf(Settings.Content_End, SearchStartPosition);
+                    SearchStartPosition = HTML.IndexOf(Settings.Content_End, SearchStartPosition+1);
                     if (SearchStartPosition == -1)
                     {
                         return EmptyStr;
