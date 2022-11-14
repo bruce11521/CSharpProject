@@ -1710,6 +1710,8 @@ namespace NovelDownloader
                             {
                                 Content = Content.Replace(whiteSpace, string.Empty);
                             }
+                            Regex htmlReg = new Regex(@"<[^>]*>");
+                            Content = htmlReg.Replace(Content, string.Empty);
                             foreach (var newLine in NewLineList)
                             {
                                 Content = Content.Replace(newLine, Environment.NewLine);
