@@ -385,6 +385,7 @@ namespace NovelDownloader
             #endregion
 
             radButton_SaveFileDialog.Click += RadButton_SaveFileDialog_Click;
+            radButton_OpenFileFolder.Click += RadButton_OpenFileFolder_Click;
 
             radButton_SensorNovelName.Click += RadButton_SensorNovelName_Click;
 
@@ -424,6 +425,19 @@ namespace NovelDownloader
                 RadButton_Download_Click(sender, e);
             };
         }
+
+        private void RadButton_OpenFileFolder_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(radTextBoxControl_SaveFilePath.Text))
+            {
+                if (Directory.Exists(radTextBoxControl_SaveFilePath.Text))
+                {
+                    var FolderPath = Path.GetDirectoryName(radTextBoxControl_SaveFilePath.Text);
+                    Process.Start(FolderPath);
+                }
+            }
+        }
+
         /// <summary>
         /// 回復進階設定預設值
         /// </summary>
@@ -486,6 +500,11 @@ namespace NovelDownloader
                 FileDialogsLocalizationProvider.CurrentProvider = new ManualFileDialogsLocalizationProvider();
                 RadOpenFolderDialog radOpenFolderDialog = new RadOpenFolderDialog();
                 radOpenFolderDialog.OpenFolderDialogForm.FormElement.Font = _utility.SetFontSize();
+                foreach(Control item in radOpenFolderDialog.OpenFolderDialogForm.Controls[0].Controls)
+                {
+                    item.Font = _utility.SetFontSize(12f);
+                }
+
                 radOpenFolderDialog.RestoreDirectory = true;
                 radOpenFolderDialog.InitialSelectedLayout = Telerik.WinControls.FileDialogs.LayoutType.Details;
                 //radSaveFileDialog.SaveFileDialogForm.ThemeName = "Fluent";
@@ -586,7 +605,15 @@ namespace NovelDownloader
                     }
                     radLabel_Main_Status.Text = "多執行續下載已經終止!";
                     radProgressBar_Download.Value1 = 0;
-                    radProgressBar_Download.ProgressBarElement.Text = "";
+                    radProgressBar_Download.ProgressBarElement.Text = string.Empty;
+                }
+                if(radProgressBar_Download.Value1 != 0)
+                {
+                    radProgressBar_Download.Value1 = 0;
+                }
+                if(radProgressBar_Download.ProgressBarElement.Text != string.Empty)
+                {
+                    radProgressBar_Download.ProgressBarElement.Text = string.Empty;
                 }
                 ControlEnabledStatus(nameof(RadTextBoxControl), true);
                 ControlEnabledStatus(nameof(RadButton), true);
@@ -672,7 +699,47 @@ namespace NovelDownloader
                                 _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Warning, "參數不可為空!", "連續網址-副檔名", -1, AlertScreenPosition.BottomRight);
                                 return;
                             }
-                            URL = CheckURLList[0] + radTextBoxControl_PageStart.Text + "." + radTextBoxControl_PageType.Text;
+
+                            
+                            var urlStr = CheckURLList[0];
+                            Uri url = new Uri(urlStr);
+                            if (url != null)
+                            {
+                                var urlList = url.Segments;
+                                if (urlList != null && urlList.Any())
+                                {
+                                    if (urlList?.LastOrDefault()?.ToUpper().Contains(".HTML") == true)
+                                    {
+                                        _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Warning, "網址解析錯誤!\nURL: {url} ", "小說名稱", -1);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        URL = urlStr + radTextBoxControl_PageStart.Text + (radTextBoxControl_PageType.Text.Contains(".") ? radTextBoxControl_PageType.Text : "." + radTextBoxControl_PageType.Text);
+                                        //if (urlStr.Substring(urlStr.Length - 1, 1) == "/")
+                                        //{
+                                        //}
+                                        //else
+                                        //{
+                                        //    URL = urlStr + "/" + radTextBoxControl_PageStart.Text + (radTextBoxControl_PageType.Text.Contains(".") ? radTextBoxControl_PageType.Text : "." + radTextBoxControl_PageType.Text);
+                                        //}
+                                    }
+                                }
+                                else
+                                {
+                                    _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Warning, "網址解析失敗!\nURL: {url} ", "小說名稱", -1);
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Warning, "網址解析失敗!\nURL: {url} ", "小說名稱", -1);
+                                return;
+                                //None URL
+                            }
+
+                            
+                            //URL = CheckURLList[0] + radTextBoxControl_PageStart.Text + "." + radTextBoxControl_PageType.Text;
                         }
                         else
                         {
@@ -690,6 +757,7 @@ namespace NovelDownloader
                                 HttpWebRequest request = WebRequest.Create(URL) as HttpWebRequest;
                                 if (request != null)
                                 {
+                                    
                                     request.Method = "GET";
                                     request.ContentType = "text/html; charset=UTF-8";
                                     //request.Accept = "application/json";
@@ -709,7 +777,19 @@ namespace NovelDownloader
                                                 RegexHtmlElement(resultdata);
                                                 if (!string.IsNullOrWhiteSpace(NovelName_GLOBLE))
                                                 {
-                                                    radTextBoxControl_SaveFileName.Text = NovelName_GLOBLE + ".txt";
+                                                    if (radTextBoxControl_SaveFileName.Text.Contains(NovelName_GLOBLE))
+                                                    {
+                                                        //使用自訂名稱
+                                                    }
+                                                    else
+                                                    {
+                                                        //若不相符才使用預設
+                                                        if(DialogResult.OK == RadMessageBox.Show($"是否使用預設小說名稱?\n\n預設小說名稱:\"{NovelName_GLOBLE}\"","小說名稱檢測", MessageBoxButtons.OKCancel, RadMessageIcon.Question))
+                                                        {
+                                                            radTextBoxControl_SaveFileName.Text = NovelName_GLOBLE + ".txt";
+                                                        }
+                                                    }
+                                                    
                                                 }
                                                 else
                                                 {
@@ -1001,7 +1081,7 @@ namespace NovelDownloader
                                             }
                                             radButton_SensorNovelName.PerformClick();//預先抓取小說名稱
 
-                                            if (DialogResult.Cancel == RadMessageBox.Show($"小說名稱:{NovelName_GLOBLE}\n預計下載章節數:{PageCount + 1}章.\n預覽小說下載網址:\n{DownloadUrlList?.FirstOrDefault()}\n\n請確認資訊是否正確，並進行下載?", "小說章節總數", MessageBoxButtons.OKCancel, RadMessageIcon.Info))
+                                            if (DialogResult.Cancel == RadMessageBox.Show($"網站抓取小說名稱:{NovelName_GLOBLE}\n檔案名稱:{radTextBoxControl_SaveFileName.Text}\n預計下載章節數:{PageCount + 1}章.\n預覽小說下載網址:\n{DownloadUrlList?.FirstOrDefault()}\n\n請確認資訊是否正確，並進行下載?", "小說章節總數", MessageBoxButtons.OKCancel, RadMessageIcon.Info))
                                             {
                                                 return;
                                             }
@@ -1238,7 +1318,7 @@ namespace NovelDownloader
         {
             try
             {
-                NovelDownloadProcess((LoadingThread)e.Argument);
+                NovelDownloadProcess((LoadingThread)e.Argument, (BackgroundWorker)sender);
                 if (((BackgroundWorker)sender).CancellationPending)
                 {
                     e.Cancel = true;
@@ -1272,6 +1352,7 @@ namespace NovelDownloader
                     {
                         radProgressBar_Download.Value1 = e.ProgressPercentage > 100 ? 100 : e.ProgressPercentage;
                         radProgressBar_Download.ProgressBarElement.Text = e.ProgressPercentage + "%";
+                        radLabel_Main_Status.Text = "多執行緒下載中...";
                     }
                     else
                     {
@@ -1449,6 +1530,9 @@ namespace NovelDownloader
                         default:
                             break;
                     }
+                    radProgressBar_Download.Value1 = progressBarValue > 100 ? 100 : progressBarValue;
+                    radProgressBar_Download.ProgressBarElement.Text = progressBarValue + "%";
+
                 }
             }
             catch
@@ -1456,7 +1540,7 @@ namespace NovelDownloader
                 throw;
             }
         }
-        private void NovelDownloadProcess(LoadingThread loadingThread)
+        private void NovelDownloadProcess(LoadingThread loadingThread, BackgroundWorker Sender)
         {
             try
             {
@@ -1506,6 +1590,7 @@ namespace NovelDownloader
                                 default:
                                     break;
                             }
+                            Sender.ReportProgress(progressBarValue, loadingThread);
                             foreach (var item in DownloadListTuple.DownloadUrl)
                             {
                                 Thread.Sleep(_utility.RandomNext(300, 500));
@@ -1561,6 +1646,7 @@ namespace NovelDownloader
                                 default:
                                     break;
                             }
+                            Sender.ReportProgress(progressBarValue, loadingThread);
                         }
                         break;
                     default:

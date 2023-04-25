@@ -128,6 +128,8 @@
             this.radPageViewPage_Version = new Telerik.WinControls.UI.RadPageViewPage();
             this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
             this.radPictureBox_Coffee = new Telerik.WinControls.UI.RadPictureBox();
+            this.radLabel_CopyRightText = new Telerik.WinControls.UI.RadLabel();
+            this.radLabel35 = new Telerik.WinControls.UI.RadLabel();
             this.radLabel_Version = new Telerik.WinControls.UI.RadLabel();
             this.radPageViewPage_AdvanceSettings = new Telerik.WinControls.UI.RadPageViewPage();
             this.radGroupBox5 = new Telerik.WinControls.UI.RadGroupBox();
@@ -149,8 +151,7 @@
             this.tableLayoutPanel19 = new System.Windows.Forms.TableLayoutPanel();
             this.radTextBoxControl_TestInput = new Telerik.WinControls.UI.RadTextBoxControl();
             this.radButton_TestInput = new Telerik.WinControls.UI.RadButton();
-            this.radLabel_CopyRightText = new Telerik.WinControls.UI.RadLabel();
-            this.radLabel35 = new Telerik.WinControls.UI.RadLabel();
+            this.radButton_OpenFileFolder = new Telerik.WinControls.UI.RadButton();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radPageView_Main)).BeginInit();
             this.radPageView_Main.SuspendLayout();
@@ -253,6 +254,8 @@
             this.radPageViewPage_Version.SuspendLayout();
             this.tableLayoutPanel12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radPictureBox_Coffee)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radLabel_CopyRightText)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radLabel35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.radLabel_Version)).BeginInit();
             this.radPageViewPage_AdvanceSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radGroupBox5)).BeginInit();
@@ -275,8 +278,7 @@
             this.tableLayoutPanel19.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radTextBoxControl_TestInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.radButton_TestInput)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel_CopyRightText)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel35)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radButton_OpenFileFolder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
             this.SuspendLayout();
             // 
@@ -291,7 +293,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 2F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(792, 570);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(801, 627);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // radPageView_Main
@@ -307,8 +309,8 @@
             this.radPageView_Main.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.radPageView_Main.Location = new System.Drawing.Point(3, 5);
             this.radPageView_Main.Name = "radPageView_Main";
-            this.radPageView_Main.SelectedPage = this.radPageViewPage_Version;
-            this.radPageView_Main.Size = new System.Drawing.Size(786, 562);
+            this.radPageView_Main.SelectedPage = this.radPageViewPage_Main;
+            this.radPageView_Main.Size = new System.Drawing.Size(795, 619);
             this.radPageView_Main.TabIndex = 2;
             this.radPageView_Main.ThemeName = "ControlDefault";
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.radPageView_Main.GetChildAt(0))).ShowItemCloseButton = false;
@@ -319,7 +321,7 @@
             this.radPageViewPage_Main.ItemSize = new System.Drawing.SizeF(117F, 35F);
             this.radPageViewPage_Main.Location = new System.Drawing.Point(10, 44);
             this.radPageViewPage_Main.Name = "radPageViewPage_Main";
-            this.radPageViewPage_Main.Size = new System.Drawing.Size(765, 507);
+            this.radPageViewPage_Main.Size = new System.Drawing.Size(774, 564);
             this.radPageViewPage_Main.Text = "主要執行頁面";
             // 
             // tableLayoutPanel3
@@ -341,16 +343,16 @@
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 3;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 287F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 307F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(765, 507);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(774, 564);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // radLabel_Main_Status
             // 
             this.tableLayoutPanel3.SetColumnSpan(this.radLabel_Main_Status, 3);
             this.radLabel_Main_Status.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radLabel_Main_Status.Location = new System.Drawing.Point(102, 477);
+            this.radLabel_Main_Status.Location = new System.Drawing.Point(102, 534);
             this.radLabel_Main_Status.Name = "radLabel_Main_Status";
             this.radLabel_Main_Status.Size = new System.Drawing.Size(62, 25);
             this.radLabel_Main_Status.TabIndex = 3;
@@ -359,9 +361,9 @@
             // radLabel7
             // 
             this.radLabel7.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radLabel7.Location = new System.Drawing.Point(3, 190);
+            this.radLabel7.Location = new System.Drawing.Point(3, 227);
             this.radLabel7.Name = "radLabel7";
-            this.radLabel7.Size = new System.Drawing.Size(32, 131);
+            this.radLabel7.Size = new System.Drawing.Size(33, 131);
             this.radLabel7.TabIndex = 3;
             this.radLabel7.Text = "相\r\n關\r\n參\r\n數\r\n設\r\n定";
             // 
@@ -377,9 +379,9 @@
             // radLabel5
             // 
             this.radLabel5.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radLabel5.Location = new System.Drawing.Point(41, 477);
+            this.radLabel5.Location = new System.Drawing.Point(41, 534);
             this.radLabel5.Name = "radLabel5";
-            this.radLabel5.Size = new System.Drawing.Size(55, 25);
+            this.radLabel5.Size = new System.Drawing.Size(57, 25);
             this.radLabel5.TabIndex = 1;
             this.radLabel5.Text = "狀態：";
             // 
@@ -392,7 +394,7 @@
             this.radTextBoxControl_Url.Multiline = true;
             this.radTextBoxControl_Url.Name = "radTextBoxControl_Url";
             this.radTextBoxControl_Url.NullText = resources.GetString("radTextBoxControl_Url.NullText");
-            this.radTextBoxControl_Url.Size = new System.Drawing.Size(721, 181);
+            this.radTextBoxControl_Url.Size = new System.Drawing.Size(730, 218);
             this.radTextBoxControl_Url.TabIndex = 1;
             this.radTextBoxControl_Url.ThemeName = "ControlDefault";
             // 
@@ -405,13 +407,13 @@
             this.tableLayoutPanel4.Controls.Add(this.radGroupBox1, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.radGroupBox2, 0, 1);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(41, 190);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(41, 227);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 3;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 120F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 43F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(721, 281);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(730, 301);
             this.tableLayoutPanel4.TabIndex = 2;
             // 
             // tableLayoutPanel7
@@ -426,11 +428,11 @@
             this.tableLayoutPanel7.Controls.Add(this.radLabel14, 1, 0);
             this.tableLayoutPanel7.Controls.Add(this.radProgressBar_Download, 2, 0);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 241);
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 261);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
             this.tableLayoutPanel7.RowCount = 1;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(715, 37);
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(724, 37);
             this.tableLayoutPanel7.TabIndex = 1;
             // 
             // radButton_Download
@@ -449,7 +451,7 @@
             // 
             this.radButton_Download_Cancel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radButton_Download_Cancel.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radButton_Download_Cancel.Location = new System.Drawing.Point(598, 3);
+            this.radButton_Download_Cancel.Location = new System.Drawing.Point(607, 3);
             this.radButton_Download_Cancel.Name = "radButton_Download_Cancel";
             this.radButton_Download_Cancel.Size = new System.Drawing.Size(114, 31);
             this.radButton_Download_Cancel.TabIndex = 5;
@@ -473,7 +475,7 @@
             this.radProgressBar_Download.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.radProgressBar_Download.Location = new System.Drawing.Point(252, 3);
             this.radProgressBar_Download.Name = "radProgressBar_Download";
-            this.radProgressBar_Download.Size = new System.Drawing.Size(340, 31);
+            this.radProgressBar_Download.Size = new System.Drawing.Size(349, 31);
             this.radProgressBar_Download.TabIndex = 6;
             // 
             // radGroupBox1
@@ -486,7 +488,7 @@
             this.radGroupBox1.Location = new System.Drawing.Point(3, 3);
             this.radGroupBox1.Name = "radGroupBox1";
             this.radGroupBox1.Padding = new System.Windows.Forms.Padding(2, 24, 2, 2);
-            this.radGroupBox1.Size = new System.Drawing.Size(715, 114);
+            this.radGroupBox1.Size = new System.Drawing.Size(724, 114);
             this.radGroupBox1.TabIndex = 0;
             this.radGroupBox1.Text = "網址參數設定";
             this.radGroupBox1.ThemeName = "ControlDefault";
@@ -505,7 +507,7 @@
             this.tableLayoutPanel5.RowCount = 2;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 64.77273F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 35.22727F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(711, 88);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(720, 88);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // radRadioButton_NoneContinuedUrl
@@ -549,25 +551,25 @@
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 1;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(555, 51);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(564, 51);
             this.tableLayoutPanel6.TabIndex = 2;
             // 
             // radTextBoxControl_PageType
             // 
             this.radTextBoxControl_PageType.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radTextBoxControl_PageType.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radTextBoxControl_PageType.Location = new System.Drawing.Point(497, 3);
+            this.radTextBoxControl_PageType.Location = new System.Drawing.Point(505, 3);
             this.radTextBoxControl_PageType.Name = "radTextBoxControl_PageType";
-            this.radTextBoxControl_PageType.Size = new System.Drawing.Size(55, 45);
+            this.radTextBoxControl_PageType.Size = new System.Drawing.Size(56, 45);
             this.radTextBoxControl_PageType.TabIndex = 3;
             this.radTextBoxControl_PageType.ThemeName = "ControlDefault";
             // 
             // radLabel1
             // 
             this.radLabel1.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radLabel1.Location = new System.Drawing.Point(413, 3);
+            this.radLabel1.Location = new System.Drawing.Point(421, 3);
             this.radLabel1.Name = "radLabel1";
-            this.radLabel1.Size = new System.Drawing.Size(75, 45);
+            this.radLabel1.Size = new System.Drawing.Size(75, 46);
             this.radLabel1.TabIndex = 1;
             this.radLabel1.Text = "副檔名:\r\nEx:html";
             // 
@@ -575,10 +577,10 @@
             // 
             this.radTextBoxControl_PageEnd.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radTextBoxControl_PageEnd.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radTextBoxControl_PageEnd.Location = new System.Drawing.Point(294, 3);
+            this.radTextBoxControl_PageEnd.Location = new System.Drawing.Point(298, 3);
             this.radTextBoxControl_PageEnd.Multiline = true;
             this.radTextBoxControl_PageEnd.Name = "radTextBoxControl_PageEnd";
-            this.radTextBoxControl_PageEnd.Size = new System.Drawing.Size(113, 45);
+            this.radTextBoxControl_PageEnd.Size = new System.Drawing.Size(117, 45);
             this.radTextBoxControl_PageEnd.TabIndex = 2;
             this.radTextBoxControl_PageEnd.ThemeName = "ControlDefault";
             // 
@@ -589,7 +591,7 @@
             this.radTextBoxControl_PageStart.Location = new System.Drawing.Point(89, 3);
             this.radTextBoxControl_PageStart.Multiline = true;
             this.radTextBoxControl_PageStart.Name = "radTextBoxControl_PageStart";
-            this.radTextBoxControl_PageStart.Size = new System.Drawing.Size(113, 45);
+            this.radTextBoxControl_PageStart.Size = new System.Drawing.Size(117, 45);
             this.radTextBoxControl_PageStart.TabIndex = 2;
             this.radTextBoxControl_PageStart.ThemeName = "ControlDefault";
             // 
@@ -605,9 +607,9 @@
             // radLabel4
             // 
             this.radLabel4.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radLabel4.Location = new System.Drawing.Point(208, 3);
+            this.radLabel4.Location = new System.Drawing.Point(212, 3);
             this.radLabel4.Name = "radLabel4";
-            this.radLabel4.Size = new System.Drawing.Size(80, 45);
+            this.radLabel4.Size = new System.Drawing.Size(82, 46);
             this.radLabel4.TabIndex = 2;
             this.radLabel4.Text = "結束參數\r\nEx:0100";
             // 
@@ -621,7 +623,7 @@
             this.radGroupBox2.Location = new System.Drawing.Point(3, 123);
             this.radGroupBox2.Name = "radGroupBox2";
             this.radGroupBox2.Padding = new System.Windows.Forms.Padding(2, 24, 2, 2);
-            this.radGroupBox2.Size = new System.Drawing.Size(715, 112);
+            this.radGroupBox2.Size = new System.Drawing.Size(724, 132);
             this.radGroupBox2.TabIndex = 2;
             this.radGroupBox2.Text = "TXT檔案儲存設定";
             this.radGroupBox2.ThemeName = "ControlDefault";
@@ -638,20 +640,22 @@
             this.tableLayoutPanel8.Controls.Add(this.radTextBoxControl_SaveFilePath, 1, 1);
             this.tableLayoutPanel8.Controls.Add(this.radButton_SaveFileDialog, 2, 1);
             this.tableLayoutPanel8.Controls.Add(this.radLabel6, 0, 1);
+            this.tableLayoutPanel8.Controls.Add(this.radButton_OpenFileFolder, 2, 2);
             this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel8.Location = new System.Drawing.Point(2, 24);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
-            this.tableLayoutPanel8.RowCount = 2;
+            this.tableLayoutPanel8.RowCount = 3;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 34F));
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(711, 86);
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(720, 106);
             this.tableLayoutPanel8.TabIndex = 0;
             // 
             // radButton_SensorNovelName
             // 
             this.radButton_SensorNovelName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radButton_SensorNovelName.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radButton_SensorNovelName.Location = new System.Drawing.Point(597, 3);
+            this.radButton_SensorNovelName.Location = new System.Drawing.Point(606, 3);
             this.radButton_SensorNovelName.Name = "radButton_SensorNovelName";
             this.radButton_SensorNovelName.Size = new System.Drawing.Size(111, 28);
             this.radButton_SensorNovelName.TabIndex = 6;
@@ -665,7 +669,7 @@
             this.radTextBoxControl_SaveFileName.Location = new System.Drawing.Point(89, 3);
             this.radTextBoxControl_SaveFileName.Multiline = true;
             this.radTextBoxControl_SaveFileName.Name = "radTextBoxControl_SaveFileName";
-            this.radTextBoxControl_SaveFileName.Size = new System.Drawing.Size(502, 28);
+            this.radTextBoxControl_SaveFileName.Size = new System.Drawing.Size(511, 28);
             this.radTextBoxControl_SaveFileName.TabIndex = 5;
             this.radTextBoxControl_SaveFileName.ThemeName = "ControlDefault";
             // 
@@ -685,7 +689,8 @@
             this.radTextBoxControl_SaveFilePath.Location = new System.Drawing.Point(89, 37);
             this.radTextBoxControl_SaveFilePath.Multiline = true;
             this.radTextBoxControl_SaveFilePath.Name = "radTextBoxControl_SaveFilePath";
-            this.radTextBoxControl_SaveFilePath.Size = new System.Drawing.Size(502, 46);
+            this.tableLayoutPanel8.SetRowSpan(this.radTextBoxControl_SaveFilePath, 2);
+            this.radTextBoxControl_SaveFilePath.Size = new System.Drawing.Size(511, 66);
             this.radTextBoxControl_SaveFilePath.TabIndex = 3;
             this.radTextBoxControl_SaveFilePath.ThemeName = "ControlDefault";
             // 
@@ -693,11 +698,11 @@
             // 
             this.radButton_SaveFileDialog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radButton_SaveFileDialog.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radButton_SaveFileDialog.Location = new System.Drawing.Point(597, 37);
+            this.radButton_SaveFileDialog.Location = new System.Drawing.Point(606, 37);
             this.radButton_SaveFileDialog.Name = "radButton_SaveFileDialog";
-            this.radButton_SaveFileDialog.Size = new System.Drawing.Size(111, 46);
+            this.radButton_SaveFileDialog.Size = new System.Drawing.Size(111, 30);
             this.radButton_SaveFileDialog.TabIndex = 3;
-            this.radButton_SaveFileDialog.Text = " 檔案儲存\r\n路徑瀏覽";
+            this.radButton_SaveFileDialog.Text = "檔案儲存瀏覽";
             this.radButton_SaveFileDialog.ThemeName = "ControlDefault";
             // 
             // radLabel6
@@ -705,6 +710,7 @@
             this.radLabel6.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.radLabel6.Location = new System.Drawing.Point(3, 37);
             this.radLabel6.Name = "radLabel6";
+            this.tableLayoutPanel8.SetRowSpan(this.radLabel6, 2);
             this.radLabel6.Size = new System.Drawing.Size(74, 25);
             this.radLabel6.TabIndex = 3;
             this.radLabel6.Text = "儲存路徑";
@@ -1468,6 +1474,31 @@
             this.radPictureBox_Coffee.Size = new System.Drawing.Size(296, 194);
             this.radPictureBox_Coffee.TabIndex = 0;
             // 
+            // radLabel_CopyRightText
+            // 
+            this.radLabel_CopyRightText.AutoSize = false;
+            this.radLabel_CopyRightText.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radLabel_CopyRightText.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radLabel_CopyRightText.Location = new System.Drawing.Point(234, 319);
+            this.radLabel_CopyRightText.Name = "radLabel_CopyRightText";
+            this.radLabel_CopyRightText.Size = new System.Drawing.Size(296, 185);
+            this.radLabel_CopyRightText.TabIndex = 3;
+            this.radLabel_CopyRightText.Text = "Designed and implemented by\r\nLin Bruce\r\n\r\nCopyRight © 2022 Bruce";
+            this.radLabel_CopyRightText.TextAlignment = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // radLabel35
+            // 
+            this.radLabel35.AutoSize = false;
+            this.tableLayoutPanel12.SetColumnSpan(this.radLabel35, 3);
+            this.radLabel35.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radLabel35.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radLabel35.Location = new System.Drawing.Point(3, 203);
+            this.radLabel35.Name = "radLabel35";
+            this.radLabel35.Size = new System.Drawing.Size(759, 64);
+            this.radLabel35.TabIndex = 4;
+            this.radLabel35.Text = "Novel Downloader";
+            this.radLabel35.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // radLabel_Version
             // 
             this.radLabel_Version.AutoSize = false;
@@ -1728,36 +1759,21 @@
             this.radButton_TestInput.TabIndex = 1;
             this.radButton_TestInput.Text = "HTML網頁原始碼測試輸入";
             // 
-            // radLabel_CopyRightText
+            // radButton_OpenFileFolder
             // 
-            this.radLabel_CopyRightText.AutoSize = false;
-            this.radLabel_CopyRightText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radLabel_CopyRightText.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radLabel_CopyRightText.Location = new System.Drawing.Point(234, 319);
-            this.radLabel_CopyRightText.Name = "radLabel_CopyRightText";
-            this.radLabel_CopyRightText.Size = new System.Drawing.Size(296, 185);
-            this.radLabel_CopyRightText.TabIndex = 3;
-            this.radLabel_CopyRightText.Text = "Designed and implemented by\r\nLin Bruce\r\n\r\nCopyRight © 2022 Bruce";
-            this.radLabel_CopyRightText.TextAlignment = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // radLabel35
-            // 
-            this.radLabel35.AutoSize = false;
-            this.tableLayoutPanel12.SetColumnSpan(this.radLabel35, 3);
-            this.radLabel35.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radLabel35.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radLabel35.Location = new System.Drawing.Point(3, 203);
-            this.radLabel35.Name = "radLabel35";
-            this.radLabel35.Size = new System.Drawing.Size(759, 64);
-            this.radLabel35.TabIndex = 4;
-            this.radLabel35.Text = "Novel Downloader";
-            this.radLabel35.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.radButton_OpenFileFolder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radButton_OpenFileFolder.Font = new System.Drawing.Font("YaHei Consolas Hybrid", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radButton_OpenFileFolder.Location = new System.Drawing.Point(606, 73);
+            this.radButton_OpenFileFolder.Name = "radButton_OpenFileFolder";
+            this.radButton_OpenFileFolder.Size = new System.Drawing.Size(111, 30);
+            this.radButton_OpenFileFolder.TabIndex = 7;
+            this.radButton_OpenFileFolder.Text = "開啟資料夾";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(792, 570);
+            this.ClientSize = new System.Drawing.Size(801, 627);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(1200, 900);
@@ -1879,6 +1895,8 @@
             this.radPageViewPage_Version.ResumeLayout(false);
             this.tableLayoutPanel12.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.radPictureBox_Coffee)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radLabel_CopyRightText)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radLabel35)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.radLabel_Version)).EndInit();
             this.radPageViewPage_AdvanceSettings.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.radGroupBox5)).EndInit();
@@ -1904,8 +1922,7 @@
             this.tableLayoutPanel19.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.radTextBoxControl_TestInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.radButton_TestInput)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel_CopyRightText)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel35)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radButton_OpenFileFolder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
             this.ResumeLayout(false);
 
@@ -2035,5 +2052,6 @@
         private Telerik.WinControls.UI.RadButton radButton_TestInput;
         private Telerik.WinControls.UI.RadLabel radLabel_CopyRightText;
         private Telerik.WinControls.UI.RadLabel radLabel35;
+        private Telerik.WinControls.UI.RadButton radButton_OpenFileFolder;
     }
 }
