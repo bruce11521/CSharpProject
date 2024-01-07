@@ -78,7 +78,12 @@ namespace NovelDownloader
         /// 當目的地檔案存在時候，是否進行覆蓋
         /// </summary>
         private bool IsDeleteFileWhenTargetFileExist = false;
+        /// <summary>
+        /// radradiobutton CheckStateChanging LockFlag
+        /// </summary>
+        private bool radradioButtonCheckStateChanging_LockFlag = false;
         #endregion
+
         #region LoadingType Enum
         /// <summary>
         /// 多執行序
@@ -348,8 +353,10 @@ namespace NovelDownloader
                         e.ToolTipText = lab.Text;
                 };
             }
-           
 
+            radRadioButton_NovalFileDownload.CheckStateChanging += RadRadioButton_CheckStateChanging; ;
+            radRadioButton_ContinuedUrl.CheckStateChanging += RadRadioButton_CheckStateChanging;
+            radRadioButton_NoneContinuedUrl.CheckStateChanging += RadRadioButton_CheckStateChanging;
 
             #region Advance Settings 
             radTextBoxControl_AdvanceSettings_DownloadWaitingSeconds.TextChanging += (sender, e) =>
@@ -425,6 +432,55 @@ namespace NovelDownloader
                 RadButton_Download_Click(sender, e);
             };
         }
+
+        private void RadRadioButton_CheckStateChanging(object sender, CheckStateChangingEventArgs args)
+        {
+            try
+            {
+                if (radradioButtonCheckStateChanging_LockFlag is false)
+                {
+                    radradioButtonCheckStateChanging_LockFlag = true;
+                    try
+                    {
+                        if (sender is RadRadioButton rbtn)
+                        {
+                            if (args.NewValue is CheckState.Checked)
+                            {
+                                foreach (RadRadioButton rbtnItem in _utility.GetAllControl(tableLayoutPanel5, typeof(RadRadioButton)))
+                                {
+                                    if (rbtnItem.Name != rbtn.Name)
+                                    {
+                                        if (rbtnItem.CheckState == CheckState.Checked)
+                                        {
+                                            rbtnItem.CheckState = CheckState.Unchecked;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                rbtn.CheckState = CheckState.Unchecked;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        radradioButtonCheckStateChanging_LockFlag = false;
+                    }
+                }
+            }
+            catch
+            {
+                radradioButtonCheckStateChanging_LockFlag = false;
+                throw;
+            }
+        }
+
+        
 
         private void RadButton_OpenFileFolder_Click(object sender, EventArgs e)
         {
@@ -1011,39 +1067,43 @@ namespace NovelDownloader
                             }
                             break;
                         case nameof(radButton_Download):
-                            if (string.IsNullOrWhiteSpace(radTextBoxControl_Url.Text))
+                            if (radRadioButton_NovalFileDownload.CheckState != CheckState.Checked)
                             {
-                                RadMessageBox.Show("\"小說下載網址\"，不可為空!", "網址相關參數缺失", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
-                                return;
-                            }
-                            var CheckURLList = radTextBoxControl_Url.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                            if (CheckURLList != null && CheckURLList.Length > 0)
-                            {
-                                Regex regex = new Regex(@"^((http|https)://|www.)?\S*$", RegexOptions.IgnoreCase);
-                                var ErrorUrlMsg = "";
-                                int ErrorCount = 0;
-                                foreach (var url in CheckURLList)
+                                if (string.IsNullOrWhiteSpace(radTextBoxControl_Url.Text))
                                 {
-                                    Match m = regex.Match(url);
-                                    if (!m.Success)
-                                    {
-                                        ErrorUrlMsg += url + Environment.NewLine;
-                                        ErrorCount++;
-                                    }
-                                }
-                                if (ErrorUrlMsg.Length > 0)
-                                {
-                                    RadMessageBox.Show($"URL網址中有 {ErrorCount} 個不合法，請重新檢查！不合法清單在詳細資料中", "URL網址檢測", MessageBoxButtons.OK, RadMessageIcon.Exclamation, ErrorUrlMsg);
+                                    RadMessageBox.Show("\"小說下載網址\"，不可為空!", "網址相關參數缺失", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
                                     return;
                                 }
-                            }
+                                var CheckURLList = radTextBoxControl_Url.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                                if (CheckURLList != null && CheckURLList.Length > 0)
+                                {
+                                    Regex regex = new Regex(@"^((http|https)://|www.)?\S*$", RegexOptions.IgnoreCase);
+                                    var ErrorUrlMsg = "";
+                                    int ErrorCount = 0;
+                                    foreach (var url in CheckURLList)
+                                    {
+                                        Match m = regex.Match(url);
+                                        if (!m.Success)
+                                        {
+                                            ErrorUrlMsg += url + Environment.NewLine;
+                                            ErrorCount++;
+                                        }
+                                    }
+                                    if (ErrorUrlMsg.Length > 0)
+                                    {
+                                        RadMessageBox.Show($"URL網址中有 {ErrorCount} 個不合法，請重新檢查！不合法清單在詳細資料中", "URL網址檢測", MessageBoxButtons.OK, RadMessageIcon.Exclamation, ErrorUrlMsg);
+                                        return;
+                                    }
+                                }
 
-                            if (radRadioButton_ContinuedUrl.CheckState == CheckState.Unchecked &&
-                                radRadioButton_NoneContinuedUrl.CheckState == CheckState.Unchecked)
-                            {
-                                RadMessageBox.Show("未選擇網址相關參數!", "網址相關參數缺失", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
-                                //_desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Warning, "未選擇網址相關參數!", "網址相關參數缺失", -1, AlertScreenPosition.BottomRight);
-                                return;
+                                if (radRadioButton_ContinuedUrl.CheckState == CheckState.Unchecked &&
+                                    radRadioButton_NoneContinuedUrl.CheckState == CheckState.Unchecked)
+                                {
+                                    RadMessageBox.Show("未選擇網址相關參數!", "網址相關參數缺失", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
+                                    //_desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Warning, "未選擇網址相關參數!", "網址相關參數缺失", -1, AlertScreenPosition.BottomRight);
+                                    return;
+                                }
+
                             }
 
 
@@ -1287,6 +1347,117 @@ namespace NovelDownloader
                                         }
                                     }
                                 }
+                            }
+                            else if (radRadioButton_NovalFileDownload.CheckState == CheckState.Checked)
+                            {
+                                #region 小說檔案下載
+
+                                if (string.IsNullOrWhiteSpace(radTextBoxControl_NovalFileDownload.Text))
+                                {
+                                    RadMessageBox.Show("檔案路徑不可為空數值!", "小說檔案下載", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
+                                    return;
+                                }
+                                else if (File.Exists(radTextBoxControl_NovalFileDownload.Text) is false)
+                                {
+                                    RadMessageBox.Show("檔案路徑不可為空數值!", "小說檔案下載", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
+                                    return;
+                                }
+
+                                var fileExtension = Path.GetExtension(radTextBoxControl_NovalFileDownload.Text);
+                                if (".txt".ToUpper() != fileExtension?.ToUpper() )
+                                {
+                                    RadMessageBox.Show("檔案副檔名僅限於TXT!", "小說檔案下載", MessageBoxButtons.OK, RadMessageIcon.Exclamation);
+                                    return;
+                                }
+
+                                var fileString = _utility.TXT_ReadString(radTextBoxControl_NovalFileDownload.Text);
+
+
+                                var URLList = fileString.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                                if (URLList.Length > 0)
+                                {
+                                    BindSettings();
+
+                                    //預設核心數(不可小於3)
+                                    var ThreadCore = 16;
+
+                                    if (URLList.Length > 0)
+                                    {
+                                        var ListCountMod = URLList.Length % (ThreadCore - 1); //算出餘數 
+                                        var ListCount = (URLList.Length - ListCountMod) / (ThreadCore - 1);//平均每個Thread下載的URL,第16個拿來下載餘數
+
+                                        DownloadNovelURLList = new List<(int ThreadSerial, List<string>)>();
+
+                                        List<string> downloadURLList = new List<string>();
+                                        var threadNum = 1;
+                                        for (var index = 0; index < (URLList.Length - ListCountMod); index++)
+                                        {
+                                            if ((index) == ListCount * threadNum)
+                                            {
+                                                DownloadNovelURLList.Add((threadNum, downloadURLList.ToList()));
+                                                downloadURLList = new List<string>();
+                                                threadNum++;
+                                            }
+                                            downloadURLList.Add(URLList[index]);
+                                        }
+                                        DownloadNovelURLList.Add((threadNum, downloadURLList.ToList())); //第15個Thread
+                                        downloadURLList = new List<string>();
+                                        for (var i = ListCount * (ThreadCore - 1); i < URLList.Length; i++)
+                                        {
+                                            downloadURLList.Add(URLList[i]);
+                                        }
+                                        DownloadNovelURLList.Add((threadNum + 1, downloadURLList.ToList())); //第16個Thread
+
+
+                                        DownloadNovelTextList = new List<(int ThreadSearial, bool DownloadFinish, List<StringBuilder> DownloadTextList)>();
+                                        //初始化
+                                        for (int it = 1; it <= (ThreadCore); it++)
+                                        {
+                                            DownloadNovelTextList.Add((it, false, new List<StringBuilder>(8192)));
+                                        }
+
+                                        //鎖定所有控制項
+                                        ControlEnabledStatus(nameof(RadTextBoxControl), false);
+                                        ControlEnabledStatus(nameof(RadButton), false);
+                                        ControlEnabledStatus(nameof(RadRadioButton), false);
+                                        radButton_Download_Cancel.Enabled = true;
+
+                                        ResetProgressBarValueAndPermeter();
+                                        Cursor = Cursors.WaitCursor;
+                                        List<LoadingThread> loadingThreads = new List<LoadingThread>()
+                                        {
+                                            LoadingThread.Thread1,
+                                            LoadingThread.Thread2,
+                                            LoadingThread.Thread3,
+                                            LoadingThread.Thread4,
+                                            LoadingThread.Thread5,
+                                            LoadingThread.Thread6,
+                                            LoadingThread.Thread7,
+                                            LoadingThread.Thread8,
+                                            LoadingThread.Thread9,
+                                            LoadingThread.Thread10,
+                                            LoadingThread.Thread11,
+                                            LoadingThread.Thread12,
+                                            LoadingThread.Thread13,
+                                            LoadingThread.Thread14,
+                                            LoadingThread.Thread15,
+                                            LoadingThread.Thread16
+                                        };
+                                        bgw_DownloadQuery = new BackgroundWorker[loadingThreads.Count()];
+                                        for (int i = 0; i < loadingThreads.Count(); i++)
+                                        {
+                                            bgw_DownloadQuery[i] = new BackgroundWorker();
+                                            bgw_DownloadQuery[i].WorkerReportsProgress = true;
+                                            bgw_DownloadQuery[i].DoWork += new DoWorkEventHandler(Bgw_Download_Dowork);
+                                            bgw_DownloadQuery[i].ProgressChanged += new ProgressChangedEventHandler(Bgw_Download_ProgressChanged);
+                                            bgw_DownloadQuery[i].RunWorkerCompleted += new RunWorkerCompletedEventHandler(Bgw_Download_RunWorkerCompleted);
+                                            bgw_DownloadQuery[i].WorkerSupportsCancellation = true;
+                                            bgw_DownloadQuery[i].RunWorkerAsync(loadingThreads[i]);
+                                        }
+                                    }
+                                }
+
+                                #endregion
                             }
                             break;
                     }
@@ -2380,6 +2551,7 @@ namespace NovelDownloader
         }
 
         #endregion
+        
 
     }
 }

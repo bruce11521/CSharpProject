@@ -83,7 +83,7 @@ namespace NovelDownloader
         {
            
             this.Font = _utility.SetFontSize(12);
-
+            _utility.SetControlFont(this);
             foreach (RadTextBoxControl rtbc in _utility.GetAllControl(this, typeof(RadTextBoxControl)))
             {
                 rtbc.Font = _utility.SetFontSize();

@@ -35,6 +35,10 @@ namespace NovelDownloader.CoreBase.DB
         /// Dump Exec DB Command
         /// </summary>
         public StringBuilder dumpDBCommand { get; set; } = new StringBuilder();
+        /// <summary>
+        /// Connection String
+        /// </summary>
+        public string constr { get; set; }
 
         /// <summary>
         /// 日期相關參數
@@ -85,7 +89,6 @@ namespace NovelDownloader.CoreBase.DB
         /// <returns></returns>
         public IEnumerable<T> query<T>(string sql)
         {
-            string constr = HIS2_PUB.DecryptUtility.Instance.GetDecypConnectionString(defaultDBUser);
             try
             {
                 using (OracleConnection oracleConn = new OracleConnection(constr))
@@ -107,7 +110,6 @@ namespace NovelDownloader.CoreBase.DB
         /// <param name="sql"></param>
         public void excute(string sql)
         {
-            string constr = HIS2_PUB.DecryptUtility.Instance.GetDecypConnectionString(defaultDBUser);
             try
             {
                 using (OracleConnection oracleConn = new OracleConnection(constr))
@@ -130,7 +132,6 @@ namespace NovelDownloader.CoreBase.DB
         /// <returns>int</returns>
         public int Execute(string sql, object parameters = null)
         {
-            string constr = HIS2_PUB.DecryptUtility.Instance.GetDecypConnectionString(defaultDBUser);
             IDbConnection oracleConn = null;
             IDbTransaction _trans = null;
             int row = 0;
@@ -166,7 +167,6 @@ namespace NovelDownloader.CoreBase.DB
         /// <param name="sql"></param>
         public void batchExcute(List<string> sqlList)
         {
-            string constr = HIS2_PUB.DecryptUtility.Instance.GetDecypConnectionString(defaultDBUser);
             try
             {
                 using (OracleConnection oracleConn = new OracleConnection(constr))
@@ -203,7 +203,6 @@ namespace NovelDownloader.CoreBase.DB
         /// <returns>資料庫連線</returns>
         private IDbConnection GetDbConnection(bool readOnlyConnection = false)
         {
-            var constr = HIS2_PUB.DecryptUtility.Instance.GetDecypConnectionString(defaultDBUser);
             OracleConnection dBConnection = new OracleConnection(constr);
 
             if (dBConnection.State != ConnectionState.Open)
@@ -225,7 +224,6 @@ namespace NovelDownloader.CoreBase.DB
         /// <returns></returns>
         public DataTable Query(string sql, bool readOnlyConnection = false, OracleParameter[] param = null)
         {
-            string constr = HIS2_PUB.DecryptUtility.Instance.GetDecypConnectionString(defaultDBUser);
             DataSet dataSet = new DataSet();
             DataTable datatable = new DataTable();
 
@@ -466,11 +464,10 @@ namespace NovelDownloader.CoreBase.DB
         /// <returns></returns>
         public object ExecuteScalar(string sql, object parameters = null)
         {
-            string conStr = HIS2_PUB.DecryptUtility.Instance.GetDecypConnectionString(defaultDBUser);
             OracleConnection oracleConn = new OracleConnection();
             try
             {
-                using (oracleConn = new OracleConnection(conStr))
+                using (oracleConn = new OracleConnection(constr))
                 {
                     return oracleConn.ExecuteScalar(sql, parameters);
                 }
