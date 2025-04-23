@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace NovelDownloader.CoreBase.Help
 {
@@ -174,6 +173,40 @@ namespace NovelDownloader.CoreBase.Help
         }
 
         /// <summary>
+        /// 設定上限
+        /// 超過上限時，以上限呈現
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="max">上限</param>
+        /// <returns></returns>
+        public static decimal ToMax(this decimal number, decimal max)
+        {
+            if (number > max)
+            {
+                number = max;
+            }
+
+            return number;
+        }
+
+        /// <summary>
+        /// 設定上限
+        /// 超過上限時，以上限呈現
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="max">上限</param>
+        /// <returns></returns>
+        public static decimal? ToMax(this decimal? number, decimal max)
+        {
+            if(number.HasValue)
+            {
+                number =  number.Value.ToMax(max);
+            }
+
+            return number;
+        }
+
+        /// <summary>
         /// 轉成字串（null回傳null，而非string.Empty）
         /// </summary>
         /// <param name="number"></param>
@@ -197,10 +230,14 @@ namespace NovelDownloader.CoreBase.Help
         /// Decimal轉成Int
         /// </summary>
         /// <param name="number"></param>
+        /// <param name="defaultReturnValue">當為Decimal轉int失敗時候回傳 defaultReturnValue,如果未輸入則回傳0</param>
         /// <returns></returns>
-        public static int ToInt(this decimal number)
+        public static int ToInt(this decimal number, int defaultReturnValue = 0)
         {
-            return int.TryParse(number.ToString(), out int value) ? value : 0;
+            var splitString = number.ToString().Split('.');
+
+            var intString = splitString.Length > 0 ? splitString[0] : "0";
+            return int.TryParse(intString, out int value) ? value : defaultReturnValue;
         }
 
         /// <summary>
@@ -214,9 +251,33 @@ namespace NovelDownloader.CoreBase.Help
         }
 
         /// <summary>
+        /// Double轉成Int
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static int ToInt(this double number)
+        {
+            var splitString = number.ToString().Split('.');
+            var intString = splitString.Length > 0 ? splitString[0] : "0";
+            return int.TryParse(intString, out int value) ? value : 0;
+        }
+
+        /// <summary>
+        /// Double轉成Int
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static int ToInt(this double? number)
+        {
+            return (number ?? 0).ToInt();
+        }
+
+
+        /// <summary>
         /// 毫秒換算成時間，最高只到時
         /// </summary>
         /// <param name="number"></param>
+        /// <param name="showDay">顯示最高到日</param>
         /// <returns></returns>
         public static string LongMillisecondsToDateTime(this long number, bool showDay = false)
         {
@@ -269,6 +330,23 @@ namespace NovelDownloader.CoreBase.Help
             //result = new DateTime(year, month, day, hours, minutes, seconds, milliseconds);
 
             return result;
+        }
+
+        /// <summary>
+        /// Object轉成Int(Int轉型失敗或Null皆回傳-1)
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static int IsInt(this object obj)
+        {
+            if(obj != null && obj is int number)
+            {
+                return number;
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 }

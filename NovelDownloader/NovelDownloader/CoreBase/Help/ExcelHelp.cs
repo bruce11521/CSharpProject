@@ -1,12 +1,14 @@
-﻿using Dapper.Contrib.Extensions;
-using OfficeOpenXml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Dapper.Contrib.Extensions;
+using OfficeOpenXml;
+using OfficeOpenXml.Table;
 
 namespace NovelDownloader.CoreBase.Help
 {
@@ -18,7 +20,7 @@ namespace NovelDownloader.CoreBase.Help
         #region 使用教學
         // 相關Service Model說明
         //1.Model中不產生至Excel的項目前面請加入[Write(false)]，並using Dapper.Contrib.Extensions;
-        //2.要顯示名稱請在Model前加入Attribute，[DisplayName("掛號號碼")]，將會將欄位名稱改為『掛號號碼』，並using System.ComponentModel;
+        //2.要顯示名稱請在Model前加入Attribute，[DisplayName("掛號號碼")]或[Display(Name = "姓名")]，將會將欄位名稱改為『掛號號碼』，並using System.ComponentModel;
 
 
         // 直接存檔呼叫法（僅for WinForm）
@@ -32,7 +34,6 @@ namespace NovelDownloader.CoreBase.Help
         // return File(fileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 檔名);
         #endregion 使用教學
 
-
         /// <summary>
         /// 建立Excel
         /// </summary>
@@ -41,7 +42,7 @@ namespace NovelDownloader.CoreBase.Help
         /// <param name="fileName">完整檔名及路徑</param>
         /// <param name="sheetName">Sheet Name</param>
         /// <returns></returns>
-        public void CreateExcel<T>(List<T> data, string fileName, string sheetName)
+        public void CreateExcel<T>(List<T> data, string fileName = null, string sheetName = null)
         {
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
 
@@ -66,8 +67,10 @@ namespace NovelDownloader.CoreBase.Help
             //組Excel
             this.BindSheet(data, sheet1, true);
 
+            sheet1.View.FreezePanes(2, 1);
+
             FileInfo fileInfo = new FileInfo(fileName);
-            
+
             ep.SaveAs(fileInfo);
             ep.Dispose(); //如果這邊不下Dispose，建議此ep要用using包起來，但是要記得先將資料寫進MemoryStream在Dispose。
         }
@@ -99,6 +102,8 @@ namespace NovelDownloader.CoreBase.Help
             //組Excel
             this.BindSheet(data, sheet1, true);
 
+            sheet1.View.FreezePanes(2, 1);
+
             MemoryStream fileStream = new MemoryStream();
             ep.SaveAs(fileStream);
             ep.Dispose(); //如果這邊不下Dispose，建議此ep要用using包起來，但是要記得先將資料寫進MemoryStream在Dispose。
@@ -115,16 +120,19 @@ namespace NovelDownloader.CoreBase.Help
         /// <param name="sheet">sheet</param>
         /// <param name="withCustomHeader">資料有置換標題名稱</param>
         /// <param name="intFormat">數值的資料型態</param>
-        public void BindSheet<T>(List<T> transData, ExcelWorksheet sheet, bool withCustomHeader = false, string intFormat = "#,##0")
+        public void BindSheet<T>(List<T> transData, ExcelWorksheet sheet, bool withCustomHeader = false, string intFormat = "#,##0", TableStyles tableStyle = TableStyles.None)
         {
             PropertyInfo[] pInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             var rowIndex = 1; // 列的定位
             var columnIndex = 1; // 行的定位
+            var skipColumnCount = 0; // 跳過的行數
 
             foreach (var propertyInfo in pInfos)
             {
-                if (propertyInfo.IsDefined(typeof(WriteAttribute), true))
+                if (propertyInfo.IsDefined(typeof(WriteAttribute), true)
+                    || propertyInfo.IsDefined(typeof(NoWrite), true))
                 {
+                    skipColumnCount++;
                     continue;
                 }
                 
@@ -132,7 +140,13 @@ namespace NovelDownloader.CoreBase.Help
                 {
                     // 依Model 的 DisplayName顯示欄位名稱
                     var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>();
-                    sheet.Cells[rowIndex, columnIndex].Value = string.Format(CultureInfo.CurrentCulture, "{0}", (displayName?.DisplayName ?? propertyInfo.Name));  //寫入Column name
+                    var titleName = displayName?.DisplayName;
+                    if (string.IsNullOrWhiteSpace(titleName))
+                    {
+                        var info = propertyInfo.GetCustomAttribute<DisplayAttribute>();
+                        titleName = info?.Name;
+                    }
+                    sheet.Cells[rowIndex, columnIndex].Value = string.Format(CultureInfo.CurrentCulture, "{0}", (titleName ?? propertyInfo.Name));  //寫入Column name
                 }
                 else
                 {
@@ -153,7 +167,8 @@ namespace NovelDownloader.CoreBase.Help
 
                 foreach (var propertyInfo in pInfos)
                 {
-                    if (propertyInfo.IsDefined(typeof(WriteAttribute), true))
+                    if (propertyInfo.IsDefined(typeof(WriteAttribute), true)
+                    || propertyInfo.IsDefined(typeof(NoWrite), true))
                     {
                         continue;
                     }
@@ -202,7 +217,17 @@ namespace NovelDownloader.CoreBase.Help
             }
             #endregion 將資料放到Column中
 
-            sheet.Cells[1, 1, rowIndex, pInfos.Count()].AutoFitColumns();
+            if (tableStyle != TableStyles.None)
+            {
+                // 先設定範圍
+                //ExcelRange rg = sheet.Cells[1, 1, rowIndex, pInfos.Count()];
+                // 設定至資料表
+                sheet.Tables.Add(sheet.Cells[1, 1, rowIndex, (pInfos.Count()- skipColumnCount)], sheet.Name);
+                // 設定資料樣式
+                sheet.Tables[sheet.Name].TableStyle = tableStyle;
+            }
+
+            sheet.Cells[1, 1, rowIndex, (pInfos.Count() - skipColumnCount)].AutoFitColumns();
         }
     }
 }

@@ -24,9 +24,32 @@ namespace NovelDownloader.CoreBase.Help
     }
 
     /// <summary>
-    /// 不組進DB Insert Script中
+    /// 不組進DB Insert Script中   EX:[NoWrite],[Write],[Key]
     /// </summary>
     public class NoWrite : Attribute
+    {
+
+    }
+    /// <summary>
+    /// 不組進DB Query Script中   EX:[NoSelect]
+    /// </summary>
+    public class NoSelect : Attribute
+    {
+
+    }
+
+    /// <summary>
+    /// 指定資料庫型態為 Nvarchar2
+    /// </summary>
+    public class NVarchar : Attribute
+    {
+
+    }
+
+    /// <summary>
+    /// 指定欄位隱藏
+    /// </summary>
+    public class Hide : Attribute
     {
 
     }

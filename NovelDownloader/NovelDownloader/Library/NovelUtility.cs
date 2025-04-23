@@ -828,6 +828,5 @@ namespace NovelDownloader.Library
         }
         #endregion
 
-
     }
 }

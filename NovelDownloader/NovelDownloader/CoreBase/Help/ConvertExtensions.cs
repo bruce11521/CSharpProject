@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace NovelDownloader.CoreBase.Help
 {
@@ -104,11 +105,11 @@ namespace NovelDownloader.CoreBase.Help
         /// <param name="source">資料</param>
         /// <param name="encodeType">Encoding</param>
         /// <param name="indent">是否縮排</param>
-        /// <param name="filePath">存檔路徑</param>
+        /// <param name="savePath">存檔路徑</param>
         /// <returns></returns>
         public void CreateXML<T>(object source, string savePath, Encoding encodeType, bool indent = false)
         {
-            var xmlSerializer = new XmlSerializer(typeof(T));
+            //var xmlSerializer = new XmlSerializer(typeof(T));
 
             if (encodeType == null)
             {
@@ -117,12 +118,39 @@ namespace NovelDownloader.CoreBase.Help
                 encodeType = Encoding.GetEncoding(950);//CodePagesEncodingProvider.Instance.GetEncoding(950);
             }
 
-            string xml = string.Empty;
+            //string xml = string.Empty;
+
+            //using (var sw = new MemoryStream())
+            //{
+            //var settings = new XmlWriterSettings { Encoding = encodeType, Indent = indent };
+
+            //using (var writer = XmlWriter.Create(sw, settings))
+            //{
+            //    var xnameSpace = new XmlSerializerNamespaces();
+            //    xnameSpace.Add(string.Empty, string.Empty);
+            //    xmlSerializer.Serialize(writer, source, xnameSpace);
+            //}
+            //var swArray = sw.ToArray();
+            var swArray = CreateXMLByte<T>(source, encodeType, indent);
+            File.WriteAllBytes(savePath + "xml", swArray);
+            //}
+        }
+
+        /// <summary>
+        /// 組xml檔
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="encodeType"></param>
+        /// <param name="indent"></param>
+        /// <returns></returns>
+        public byte[] CreateXMLByte<T>(object source, Encoding encodeType, bool indent = false)
+        {
+            var xmlSerializer = new XmlSerializer(typeof(T));
+            var settings = new XmlWriterSettings { Encoding = encodeType, Indent = indent };
 
             using (var sw = new MemoryStream())
             {
-                var settings = new XmlWriterSettings { Encoding = encodeType, Indent = indent };
-
                 using (var writer = XmlWriter.Create(sw, settings))
                 {
                     var xnameSpace = new XmlSerializerNamespaces();
@@ -130,18 +158,102 @@ namespace NovelDownloader.CoreBase.Help
                     xmlSerializer.Serialize(writer, source, xnameSpace);
                 }
                 var swArray = sw.ToArray();
-                File.WriteAllBytes(savePath, swArray);
+
+                return swArray;
             }
         }
 
-        /// <inheritdoc/>
-        public string FileConvertToBase64(string filePath)
-        {
-            byte[] fileBytes = File.ReadAllBytes(filePath);
-            string fileBase64 = Convert.ToBase64String(fileBytes);
+        ///// <summary>
+        ///// 將檔案直接產出成XML並壓縮
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="source"></param>
+        ///// <param name="savePath"></param>
+        ///// <param name="encodeType"></param>
+        ///// <param name="indent"></param>
+        //public void CreateXMLZip<T>(object source, string savePath, Encoding encodeType, bool indent = false)
+        //{
+        //    if (encodeType == null)
+        //    {
+        //        // Default Big5
+        //        // Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        //        encodeType = Encoding.GetEncoding(950);//CodePagesEncodingProvider.Instance.GetEncoding(950);
+        //    }
 
-            return fileBase64;
-        }
+        //    var swArray = CreateXMLByte<T>(source, encodeType, indent);
+
+        //    var fileName = savePath.Split('\\').Last() + "xml";
+        //    Dictionary<string, byte[]> sourceZip = new Dictionary<string, byte[]>()
+        //    {
+        //        [fileName] = swArray,
+        //    };
+        //    var zip = ZipData(sourceZip);
+        //    File.WriteAllBytes(savePath + "zip", zip);
+        //}
+
+        ///// <summary>
+        ///// 製作ZIP檔
+        ///// </summary>
+        ///// <param name="data"></param>
+        ///// <returns></returns>
+        //public static byte[] ZipData(Dictionary<string, byte[]> data)
+        //{
+        //    using (var zipStream = new MemoryStream())
+        //    {
+        //        using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Update))
+        //        {
+        //            foreach (var fileName in data.Keys)
+        //            {
+        //                var entry = zipArchive.CreateEntry(fileName);
+        //                using (var entryStream = entry.Open())
+        //                {
+        //                    var buff = data[fileName];
+        //                    entryStream.Write(buff, 0, buff.Length);
+        //                }
+        //            }
+        //        }
+        //        return zipStream.ToArray();
+        //    }
+        //}
+
+        ///// <summary>
+        ///// 解壓縮
+        ///// </summary>
+        ///// <param name="zip"></param>
+        ///// <returns></returns>
+        //public static Dictionary<string, byte[]> UnzipData(byte[] zip)
+        //{
+        //    var dict = new Dictionary<string, byte[]>();
+        //    using (var msZip = new MemoryStream(zip))
+        //    {
+        //        using (var archive = new ZipArchive(msZip, ZipArchiveMode.Read))
+        //        {
+        //            archive.Entries.ToList().ForEach(entry =>
+        //            {
+        //                //e.FullName可取得完整路徑
+        //                if (string.IsNullOrEmpty(entry.Name)) return;
+        //                using (var entryStream = entry.Open())
+        //                {
+        //                    using (var msEntry = new MemoryStream())
+        //                    {
+        //                        entryStream.CopyTo(msEntry);
+        //                        dict.Add(entry.Name, msEntry.ToArray());
+        //                    }
+        //                }
+        //            });
+        //        }
+        //    }
+        //    return dict;
+        //}
+
+        ///// <inheritdoc/>
+        //public string FileConvertToBase64(string filePath)
+        //{
+        //    byte[] fileBytes = File.ReadAllBytes(filePath);
+        //    string fileBase64 = Convert.ToBase64String(fileBytes);
+
+        //    return fileBase64;
+        //}
 
         /// <summary>
         /// IEnumerable To DataTable
@@ -215,6 +327,5 @@ namespace NovelDownloader.CoreBase.Help
             tbl.Rows.Add(row);
             return tbl;
         }
-
     }
 }

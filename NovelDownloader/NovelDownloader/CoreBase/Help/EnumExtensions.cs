@@ -44,17 +44,127 @@ namespace NovelDownloader.CoreBase.Help
         }
 
         /// <summary>
-        /// Enum 擴充方法，GetDisplayName
+        /// Enum 擴充方法，GetDisplay.Name
         /// </summary>
         /// <param name="enumType">Enum</param>
-        /// <returns>Enum DisplayName</returns>
+        /// <returns>Enum Display.Name</returns>
         public static string GetEnumDisplayName(this Enum enumType)
         {
             var i = enumType.GetType().GetMember(enumType.ToString())
-                .FirstOrDefault()
+                ?.FirstOrDefault()
                 ?.GetCustomAttribute<DisplayAttribute>();
 
-            return i == null ? string.Empty : i.Name;
+            return i == null ? string.Empty : i?.GetName() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Enum 擴充方法，GetEnumDisplay.GroupName
+        /// </summary>
+        /// <param name="enumType">Enum</param>
+        /// <returns>Enum Display.GroupName</returns>
+        public static string GetEnumDisplayGroupName(this Enum enumType)
+        {
+            var i = enumType.GetType().GetMember(enumType.ToString())
+                ?.FirstOrDefault()
+                ?.GetCustomAttribute<DisplayAttribute>();
+
+            return i == null ? string.Empty : i?.GetGroupName() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Enum 擴充方法，GetEnumDisplay.Order
+        /// </summary>
+        /// <param name="enumType">Enum</param>
+        /// <returns>Enum Display.Order</returns>
+        public static int GetEnumDisplayOrder(this Enum enumType)
+        {
+            var i = enumType.GetType().GetMember(enumType.ToString())
+                ?.FirstOrDefault()
+                ?.GetCustomAttribute<DisplayAttribute>();
+
+            return i == null ? 0 : i?.GetOrder() ?? 0;
+        }
+
+        /// <summary>
+        /// Enum 擴充方法，GetEnumDisplay.AutoGenerateField
+        /// </summary>
+        /// <param name="enumType">Enum</param>
+        /// <returns>Enum Display.AutoGenerateField</returns>
+        public static bool GetEnumDisplayAutoGenerateField(this Enum enumType)
+        {
+            var i = enumType.GetType().GetMember(enumType.ToString())
+                ?.FirstOrDefault()
+                ?.GetCustomAttribute<DisplayAttribute>();
+            if (i is null)
+            {
+                return false;
+            }
+            else
+            {
+                if (i?.GetAutoGenerateField().HasValue is true)
+                {
+                    return i.GetAutoGenerateField().Value;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enum 擴充方法，GetEnumDisplay.AutoGenerateFilter
+        /// </summary>
+        /// <param name="enumType">Enum</param>
+        /// <returns>Enum Display.AutoGenerateFilter</returns>
+        public static bool GetEnumDisplayAutoGenerateFilter(this Enum enumType)
+        {
+            var i = enumType.GetType().GetMember(enumType.ToString())
+                ?.FirstOrDefault()
+                ?.GetCustomAttribute<DisplayAttribute>();
+            if (i is null)
+            {
+                return false;
+            }
+            else
+            {
+                if (i?.GetAutoGenerateFilter().HasValue is true)
+                {
+                    return i.GetAutoGenerateFilter().Value;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enum 擴充方法，GetDisplay.Description
+        /// </summary>
+        /// <param name="enumType">Enum</param>
+        /// <returns>Enum Display.Description</returns>
+        public static string GetEnumDisplayDescription(this Enum enumType)
+        {
+            var i = enumType.GetType().GetMember(enumType.ToString())
+                ?.FirstOrDefault()
+                ?.GetCustomAttribute<DisplayAttribute>();
+
+            return i == null ? string.Empty : i?.GetDescription() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Enum 擴充方法，GetDisplay.ShortName
+        /// </summary>
+        /// <param name="enumType">Enum</param>
+        /// <returns>Enum Display.ShortName</returns>
+        public static string GetEnumDisplayShortName(this Enum enumType)
+        {
+            var i = enumType.GetType().GetMember(enumType.ToString())
+                ?.FirstOrDefault()
+                ?.GetCustomAttribute<DisplayAttribute>();
+
+            return i == null ? string.Empty : i?.GetShortName() ?? string.Empty;
         }
 
         /// <summary>
@@ -65,6 +175,11 @@ namespace NovelDownloader.CoreBase.Help
         public static string GetEnumDescription(this Enum value)     //取Enum中的字串
         {
             FieldInfo fi = value.GetType().GetField(value.ToString());
+            if (fi == null)
+            {
+                return string.Empty;
+            }
+
             DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
             if ((attributes != null) && attributes.Length > 0)
             {

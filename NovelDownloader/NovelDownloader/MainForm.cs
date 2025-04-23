@@ -30,6 +30,10 @@ namespace NovelDownloader
     {
         private NovelUtility _utility = new NovelUtility();
         private DesktopAlertUtil _desktopAlert = new DesktopAlertUtil();
+        /// <summary>
+        /// httpClient
+        /// </summary>
+        private HttpClientHelper _httpClientHelper = new HttpClientHelper();
 
         private List<string> DownloadUrlList = new List<string>();
         /// <summary>
@@ -292,6 +296,7 @@ namespace NovelDownloader
 
         private void UI_Register()
         {
+            radLabel_Version.Click += RadLabel_Version_Click;
             radTextBoxControl_Title_Start_SearchFlag.TextChanging += (sender, e) =>
             {
                 if (sender is RadTextBoxControl rtbc)
@@ -431,6 +436,21 @@ namespace NovelDownloader
             {
                 RadButton_Download_Click(sender, e);
             };
+        }
+
+        private void RadLabel_Version_Click(object sender, EventArgs e)
+        {
+            DateTime s = new DateTime(2025, 4, 6, 23, 59, 59);
+            if (s == DateTime.MinValue)
+            {
+
+            }
+
+            var ss = s.AddSeconds(1);
+            if (ss == DateTime.MinValue)
+            {
+
+            }
         }
 
         private void RadRadioButton_CheckStateChanging(object sender, CheckStateChangingEventArgs args)
@@ -768,10 +788,18 @@ namespace NovelDownloader
                                     {
                                         _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Warning, "網址解析錯誤!\nURL: {url} ", "小說名稱", -1);
                                         return;
-                                    }
+                                    } 
                                     else
                                     {
-                                        URL = urlStr + radTextBoxControl_PageStart.Text + (radTextBoxControl_PageType.Text.Contains(".") ? radTextBoxControl_PageType.Text : "." + radTextBoxControl_PageType.Text);
+                                        if (urlList.LastOrDefault()?.Contains("/") is false)
+                                        {
+                                            URL = urlStr + "/" + radTextBoxControl_PageStart.Text + (radTextBoxControl_PageType.Text.Contains(".") ? radTextBoxControl_PageType.Text : "." + radTextBoxControl_PageType.Text);
+                                        }
+                                        else
+                                        {
+                                            URL = urlStr + radTextBoxControl_PageStart.Text + (radTextBoxControl_PageType.Text.Contains(".") ? radTextBoxControl_PageType.Text : "." + radTextBoxControl_PageType.Text);
+                                        }
+                                            
                                         //if (urlStr.Substring(urlStr.Length - 1, 1) == "/")
                                         //{
                                         //}
@@ -810,10 +838,53 @@ namespace NovelDownloader
                             {
                                 //URL = CheckURLList[0] + radTextBoxControl_PageStart.Text + "." + radTextBoxControl_PageType.Text;
 
+                                
+                                //var resultdata = _httpClientHelper.GetAsync(URL)?.Result;
+                                //if (resultdata.IsOk)
+                                //{
+                                //    if (!string.IsNullOrWhiteSpace(resultdata.Data))
+                                //    {
+                                //        NovelName_GLOBLE = "";
+                                //        BindSettings();
+                                //        RegexHtmlElement(resultdata.Data);
+                                //        if (!string.IsNullOrWhiteSpace(NovelName_GLOBLE))
+                                //        {
+                                //            if (radTextBoxControl_SaveFileName.Text.Contains(NovelName_GLOBLE))
+                                //            {
+                                //                //使用自訂名稱
+                                //            }
+                                //            else
+                                //            {
+                                //                //若不相符才使用預設
+                                //                if (DialogResult.OK == RadMessageBox.Show($"是否使用預設小說名稱?\n\n預設小說名稱:\"{NovelName_GLOBLE}\"", "小說名稱檢測", MessageBoxButtons.OKCancel, RadMessageIcon.Question))
+                                //                {
+                                //                    radTextBoxControl_SaveFileName.Text = NovelName_GLOBLE + ".txt";
+                                //                }
+                                //            }
+
+                                //        }
+                                //        else
+                                //        {
+                                //            radTextBoxControl_SaveFileName.Text = DateTime.Now.ToString("yyyyMMdd_HHmmss") + "_Novel.txt";
+                                //            _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, "小說名稱轉換失敗! 使用預設值!", "小說名稱抓取", -1, AlertScreenPosition.BottomRight);
+                                //        }
+                                //    }
+                                //    else
+                                //    {
+                                //        radTextBoxControl_SaveFileName.Text = DateTime.Now.ToString("yyyyMMdd_HHmmss") + "_Novel.txt";
+                                //        _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, "小說資料讀取失敗! 使用預設值!", "小說名稱抓取", -1, AlertScreenPosition.BottomRight);
+                                //    }
+                                //}
+                                //else
+                                //{ 
+                                //    _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, $"小說資料獲取失敗!\n{resultdata.Message}", "小說名稱抓取", -1, AlertScreenPosition.BottomRight);
+                                //}
+
+
                                 HttpWebRequest request = WebRequest.Create(URL) as HttpWebRequest;
                                 if (request != null)
                                 {
-                                    
+
                                     request.Method = "GET";
                                     request.ContentType = "text/html; charset=UTF-8";
                                     //request.Accept = "application/json";
@@ -840,12 +911,12 @@ namespace NovelDownloader
                                                     else
                                                     {
                                                         //若不相符才使用預設
-                                                        if(DialogResult.OK == RadMessageBox.Show($"是否使用預設小說名稱?\n\n預設小說名稱:\"{NovelName_GLOBLE}\"","小說名稱檢測", MessageBoxButtons.OKCancel, RadMessageIcon.Question))
+                                                        if (DialogResult.OK == RadMessageBox.Show($"是否使用預設小說名稱?\n\n預設小說名稱:\"{NovelName_GLOBLE}\"", "小說名稱檢測", MessageBoxButtons.OKCancel, RadMessageIcon.Question))
                                                         {
                                                             radTextBoxControl_SaveFileName.Text = NovelName_GLOBLE + ".txt";
                                                         }
                                                     }
-                                                    
+
                                                 }
                                                 else
                                                 {
@@ -1012,35 +1083,57 @@ namespace NovelDownloader
                             try
                             {
                                 Cursor = Cursors.WaitCursor;
-                                HttpWebRequest request = WebRequest.Create(radTextBoxControl_PreviewUrl.Text) as HttpWebRequest;
-                                if (request != null)
+
+                                var resultdata = _httpClientHelper.GetAsync(radTextBoxControl_PreviewUrl.Text)?.Result;
+                                if (resultdata.IsOk)
                                 {
-                                    request.Method = "GET";
-                                    request.ContentType = "text/html; charset=UTF-8";
-                                    //request.Accept = "application/json";
-                                    request.Timeout = AdvanceSettings.DownloadWaitingTimeOutSeconds;
-
-                                    using (WebResponse response = request.GetResponse())
+                                    if (!string.IsNullOrWhiteSpace(resultdata.Data))
                                     {
-                                        using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                                        {
-                                            var resultdata = sr.ReadToEnd();
-                                            if (!string.IsNullOrWhiteSpace(resultdata))
-                                            {
-                                                (string Title, string Content) Novel = RegexHtmlElement(resultdata);
-                                                radTextBoxControl_PreviewText.Text = Novel.Title + Environment.NewLine + Novel.Content + Environment.NewLine;
-                                                //radTextBoxControl_PreviewText.Text = StripHTML(resultdata);
-                                                _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, "預覽TXT轉換成功!", "小說下載轉換_預覽", -1, AlertScreenPosition.BottomRight);
-                                                radLabel_Preview_Status.Text = "預覽TXT轉換成功!";
-                                            }
-                                            else
-                                            {
-                                                radLabel_Preview_Status.Text = "預覽TXT轉換失敗!";
-                                            }
-                                        }
+                                        (string Title, string Content) Novel = RegexHtmlElement(resultdata.Data);
+                                        radTextBoxControl_PreviewText.Text = Novel.Title + Environment.NewLine + Novel.Content + Environment.NewLine;
+                                        //radTextBoxControl_PreviewText.Text = StripHTML(resultdata);
+                                        _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, "預覽TXT轉換成功!", "小說下載轉換_預覽", -1, AlertScreenPosition.BottomRight);
+                                        radLabel_Preview_Status.Text = "預覽TXT轉換成功!";
                                     }
-
+                                    else
+                                    {
+                                        radLabel_Preview_Status.Text = "預覽TXT轉換失敗!";
+                                    }
                                 }
+                                else
+                                {
+                                    radLabel_Preview_Status.Text = $"預覽TXT轉換失敗:{resultdata.Message}";
+                                }
+
+                                //HttpWebRequest request = WebRequest.Create(radTextBoxControl_PreviewUrl.Text) as HttpWebRequest;
+                                //if (request != null)
+                                //{
+                                //    request.Method = "GET";
+                                //    request.ContentType = "text/html; charset=UTF-8";
+                                //    //request.Accept = "application/json";
+                                //    request.Timeout = AdvanceSettings.DownloadWaitingTimeOutSeconds;
+
+                                //    using (WebResponse response = request.GetResponse())
+                                //    {
+                                //        using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                                //        {
+                                //            var resultdata = sr.ReadToEnd();
+                                //            if (!string.IsNullOrWhiteSpace(resultdata))
+                                //            {
+                                //                (string Title, string Content) Novel = RegexHtmlElement(resultdata);
+                                //                radTextBoxControl_PreviewText.Text = Novel.Title + Environment.NewLine + Novel.Content + Environment.NewLine;
+                                //                //radTextBoxControl_PreviewText.Text = StripHTML(resultdata);
+                                //                _desktopAlert.ShowAlert_Custom(DesktopAlertUtil.Alert.Success, "預覽TXT轉換成功!", "小說下載轉換_預覽", -1, AlertScreenPosition.BottomRight);
+                                //                radLabel_Preview_Status.Text = "預覽TXT轉換成功!";
+                                //            }
+                                //            else
+                                //            {
+                                //                radLabel_Preview_Status.Text = "預覽TXT轉換失敗!";
+                                //            }
+                                //        }
+                                //    }
+
+                                //}
                             }
                             catch(Exception ex)
                             {
@@ -1735,7 +1828,7 @@ namespace NovelDownloader
                     case LoadingThread.Thread16:
                         if (DownloadNovelURLList.Any(x => x.ThreadSerial == loadingThread.ToNumberValue()))
                         {
-                            var DownloadListTuple = DownloadNovelURLList.Where(x => x.ThreadSerial == loadingThread.ToNumberValue()).FirstOrDefault();
+                            var DownloadListTuple = DownloadNovelURLList.FirstOrDefault(x => x.ThreadSerial == loadingThread.ToNumberValue());
                             switch (loadingThread)
                             {
                                 case LoadingThread.Thread1:
@@ -1767,25 +1860,31 @@ namespace NovelDownloader
                                 Thread.Sleep(_utility.RandomNext(300, 500));
                                 try
                                 {
-                                    HttpWebRequest request = WebRequest.Create(item) as HttpWebRequest;
-                                    if (request != null)
+                                    var resultdata = _httpClientHelper.GetAsync(item).Result;
+                                    if (!string.IsNullOrWhiteSpace(resultdata.Data))
                                     {
-                                        request.Method = "GET";
-                                        request.ContentType = "text/html; charset=UTF-8";
-                                        //request.Accept = "application/json";
-                                        request.Timeout = AdvanceSettings.DownloadWaitingTimeOutSeconds;
-                                        using (WebResponse response = request.GetResponse())
-                                        {
-                                            using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                                            {
-                                                var resultdata = sr.ReadToEnd();
-                                                if (!string.IsNullOrWhiteSpace(resultdata))
-                                                {
-                                                    DownloadNovelTextList.Where(x => x.ThreadSearial == loadingThread.ToNumberValue()).FirstOrDefault().DownloadTextList.Add(new StringBuilder(8192).Append(resultdata));
-                                                }
-                                            }
-                                        }
+                                        DownloadNovelTextList.FirstOrDefault(x => x.ThreadSearial == loadingThread.ToNumberValue()).DownloadTextList.Add(new StringBuilder(8192).Append(resultdata.Data));
                                     }
+
+                                    //HttpWebRequest request = WebRequest.Create(item) as HttpWebRequest;
+                                    //if (request != null)
+                                    //{
+                                    //    request.Method = "GET";
+                                    //    request.ContentType = "text/html; charset=UTF-8";
+                                    //    //request.Accept = "application/json";
+                                    //    request.Timeout = AdvanceSettings.DownloadWaitingTimeOutSeconds;
+                                    //    using (WebResponse response = request.GetResponse())
+                                    //    {
+                                    //        using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                                    //        {
+                                    //            var resultdata = sr.ReadToEnd();
+                                    //            if (!string.IsNullOrWhiteSpace(resultdata))
+                                    //            {
+                                    //                DownloadNovelTextList.Where(x => x.ThreadSearial == loadingThread.ToNumberValue()).FirstOrDefault().DownloadTextList.Add(new StringBuilder(8192).Append(resultdata));
+                                    //            }
+                                    //        }
+                                    //    }
+                                    //}
                                 }
                                 catch
                                 {
@@ -1836,6 +1935,7 @@ namespace NovelDownloader
         {
             try
             {
+                
                 int indexOfTitleStart = -1, indexOfTitleEnd = -1;
                 int indexOfContentStart = -1, indexOfContentEnd = -1;
                 int indexOfNovelNameStart = -1, indexOfNovelNameEnd = -1;
@@ -1968,6 +2068,44 @@ namespace NovelDownloader
                                 Content = Content.Replace(whiteSpace, string.Empty);
                             }
                             Regex htmlReg = new Regex(@"<[^>]*>");
+
+                            if (Content?.Contains("請到源網頁閱讀，以下內容防采集自動替換") is true)
+                            {
+                                string[] splitParams = new string[] { "</P>", "</p>" };
+                                var splitList = Content.Split(splitParams, StringSplitOptions.RemoveEmptyEntries);
+                                var lineIndex = 1;
+                                List<string> newContent = new List<string>();
+                                foreach (var item in splitList)
+                                {
+                                    if (lineIndex == 10 || lineIndex == 11)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        if (lineIndex > 11)
+                                        {
+                                            if (lineIndex % 2 == 0)
+                                            {
+                                                var convertStr = StringMap(item);
+                                                newContent.Add(convertStr);
+                                            }
+                                            else
+                                            {
+                                                newContent.Add(item);
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            newContent.Add(item);
+                                        }
+                                    } 
+                                    lineIndex++;
+                                }
+
+                                Content = string.Join("", newContent);
+                            }
                             Content = htmlReg.Replace(Content, string.Empty);
                             foreach (var newLine in NewLineList)
                             {
@@ -1979,6 +2117,12 @@ namespace NovelDownloader
                             Content = HTML.Substring(indexOfContentStart, 10);
 
                         }
+
+                        //if (Content?.Contains("請到源網頁閱讀，以下內容防采集自動替換") is true)
+                        //{
+                        //    Content = StringMap(Content);
+                        //}
+                        
                     }
                 }
                 return (Title, Content);
@@ -1988,6 +2132,43 @@ namespace NovelDownloader
                 throw;
             }
         }
+
+        private string StringMap(string source)
+        {
+            Dictionary<string, string> dicMap = new Dictionary<string, string>()
+            {
+                {"大","小"},{"多","少"},{"上","下"},{"左","右"},{"前","後"},{"冷","熱"},{"高","低"},{"進","退"},
+                {"黑","白"},{"天","地"},{"男","女"},{"裏","外"},{"死","活"},{"公","私"},{"快","慢"},{"寬","窄"},
+                {"強","弱"},{"輕","重"},{"緩","急"},{"鬆","緊"},{"好","壞"},{"美","醜"},{"善","惡"},{"閑","忙"},
+                {"來","去"},{"分","合"},{"存","亡"},{"動","靜"},{"濃","淡"},{"偏","正"},{"饑","飽"},{"愛","恨"},
+                {"升","降"},{"開","關"},{"始","終"},{"胖","瘦"},{"迎","送"},{"盈","虧"},{"真","假"},{"虛","實"},
+                {"有","無"},{"雅","俗"},{"是","否"},{"稀","密"},{"粗","細"},{"東","西"},{"小","大"},{"少","多"},
+                {"下","上"},{"右","左"},{"後","前"},{"熱","冷"},{"低","高"},{"退","進"},{"白","黑"},{"地","天"},
+                {"女","男"},{"外","裏"},{"活","死"},{"私","公"},{"慢","快"},{"窄","寬"},{"弱","強"},{"重","輕"},
+                {"急","緩"},{"緊","鬆"},{"壞","好"},{"醜","美"},{"惡","善"},{"忙","閑"},{"去","來"},{"合","分"},
+                {"亡","存"},{"靜","動"},{"淡","濃"},{"正","偏"},{"飽","饑"},{"恨","愛"},{"降","升"},{"關","開"},
+                {"終","始"},{"瘦","胖"},{"送","迎"},{"虧","盈"},{"假","真"},{"實","虛"},{"無","有"},{"俗","雅"},
+                {"否","是"},{"密","稀"},{"細","粗"},{"西","東"},{"你","我"},{"我","你"}
+            };
+            StringBuilder sb = new StringBuilder(source.Length);
+            if (!string.IsNullOrWhiteSpace(source))
+            {
+                foreach (var c in source)
+                {
+                    string ch = c.ToString();
+                    if (dicMap?.ContainsKey(ch) is true)
+                    {
+                        sb.Append(dicMap[ch]);
+                    }
+                    else
+                    {
+                        sb.Append(ch);
+                    }
+                }
+            }
+            return sb.ToString();
+        }
+
 
         #region Default settings Buttons
         private void RadButton_DefaultSettings_Click(object sender, EventArgs e)

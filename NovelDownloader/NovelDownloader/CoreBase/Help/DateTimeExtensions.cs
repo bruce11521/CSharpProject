@@ -10,6 +10,7 @@ namespace NovelDownloader.CoreBase.Help
     {
         /// <summary>
         /// 轉換為 客製化的日期字串(年/月/日)("yyyy/MM/dd")
+        /// [新增CultureInfo判斷]
         /// </summary>
         /// <param name="dateTime">日期時間</param>
         /// <returns>Birthday date in string format</returns>
@@ -17,11 +18,13 @@ namespace NovelDownloader.CoreBase.Help
         public static string ToDateTimeString(this DateTime dateTime)
         {
             //CultureInfo culture = CultureInfo.GetCultureInfo("zh-TW");, culture
-            return dateTime.ToString("yyyy/MM/dd");
+            //, CultureInfo.InvariantCulture 避免使用者系統使用民國曆導致轉換失敗
+            return dateTime.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         /// 轉換為 客製化的日期字串(年/月/日)("yyyy/MM/dd")
+        /// [新增CultureInfo判斷]
         /// </summary>
         /// <param name="dateTime">日期時間</param>
         /// <returns>Birthday date in string format</returns>
@@ -32,17 +35,45 @@ namespace NovelDownloader.CoreBase.Help
         }
 
         /// <summary>
+        /// 轉換為 客製化的日期字串(年月日)("yyyyMMdd")
+        /// [新增CultureInfo判斷]
+        /// </summary>
+        /// <param name="dateTime">日期時間</param>
+        /// <returns>Birthday date in string format</returns>
+        /// <example>2017/08/04</example>
+        public static string ToDateTimeString2(this DateTime dateTime)
+        {
+            //CultureInfo culture = CultureInfo.GetCultureInfo("zh-TW");, culture
+            //, CultureInfo.InvariantCulture 避免使用者系統使用民國曆導致轉換失敗
+            return dateTime.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// 轉換為 客製化的日期字串(年月日)("yyyyMMdd")
+        /// [新增CultureInfo判斷]
+        /// </summary>
+        /// <param name="dateTime">日期時間</param>
+        /// <returns>Birthday date in string format</returns>
+        /// <example>2017/08/04</example>
+        public static string ToDateTimeString2(this DateTime? dateTime)
+        {
+            return dateTime.HasValue ? dateTime.Value.ToDateTimeString2() : null;
+        }
+
+        /// <summary>
         /// 轉換為 客製化的日期字串(年/月/日 時:分:秒)("yyyy/MM/dd HH:mm:ss")
+        /// [新增CultureInfo判斷]
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
         public static string ToFullDateTime(this DateTime dateTime)
         {
-            return dateTime.ToString("yyyy/MM/dd HH:mm:ss");
+            return dateTime.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         /// 轉換為 客製化的日期字串(年/月/日 時:分:秒)("yyyy/MM/dd HH:mm:ss")
+        /// [新增CultureInfo判斷]
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
@@ -52,17 +83,30 @@ namespace NovelDownloader.CoreBase.Help
         }
 
         /// <summary>
-        /// 轉換為 客製化的日期字串(年/月/日 時:分:秒 毫秒)
+        /// 轉換為 客製化的日期字串(年/月/日 時:分:秒 毫秒)("yyyy/MM/dd HH:mm:ss fff")
+        /// [新增CultureInfo判斷]
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
         public static string ToFullDateTimeMillisecond(this DateTime dateTime)
         {
-            return dateTime.ToString("yyyy/MM/dd HH:mm:ss fff");
+            return dateTime.ToString("yyyy/MM/dd HH:mm:ss fff", CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// 轉換為 客製化的日期字串(年/月/日 時:分:秒 毫秒)
+        /// 轉換為 客製化的日期字串(時:分:秒 毫秒)("HH:mm:ss fff")
+        /// [新增CultureInfo判斷]
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static string ToFullTimeMillisecond(this DateTime dateTime)
+        {
+            return dateTime.ToString("HH:mm:ss fff  ", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// 轉換為 客製化的日期字串(年/月/日 時:分:秒 毫秒)("yyyy/MM/dd HH:mm:ss fff")
+        /// [新增CultureInfo判斷]
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
@@ -75,35 +119,42 @@ namespace NovelDownloader.CoreBase.Help
         /// 民國年月日(yyyMMdd)
         /// </summary>
         /// <param name="dateTime">Datetime</param>
+        /// <param name="OutputSeparateLine">是否輸出 / (yyy/MM/dd)</param>
         /// <returns></returns>
-        public static string ToClaimTaiwanDate(this DateTime dateTime)
+        public static string ToClaimTaiwanDate(this DateTime dateTime, bool OutputSeparateLine = false)
         {
             if (dateTime == DateTime.MinValue)
             {
                 return string.Empty;
             }
-
             return string.Format(
-                    CultureInfo.CurrentCulture, "{0}{1}{2}",
+                    CultureInfo.CurrentCulture, (OutputSeparateLine ? "{0}/{1}/{2}" : "{0}{1}{2}"),
                     dateTime.ToClaimTaiwanYearNumber(),
                     dateTime.Month.ToString("D2", CultureInfo.CurrentCulture),
                    dateTime.Day.ToString("D2", CultureInfo.CurrentCulture)
                    );
+            //return string.Format(
+            //        CultureInfo.CurrentCulture, "{0}{1}{2}",
+            //        dateTime.ToClaimTaiwanYearNumber(),
+            //        dateTime.Month.ToString("D2", CultureInfo.CurrentCulture),
+            //       dateTime.Day.ToString("D2", CultureInfo.CurrentCulture)
+            //       );
         }
 
         /// <summary>
         /// 民國年月日(yyyMMdd)
         /// </summary>
         /// <param name="dateTime">Nullable Datetime</param>
+        /// <param name="OutputSeparateLine">是否輸出 / (yyy/MM/dd)</param>
         /// <returns></returns>
-        public static string ToClaimTaiwanDate(this DateTime? dateTime)
+        public static string ToClaimTaiwanDate(this DateTime? dateTime, bool OutputSeparateLine = false)
         {
             if (!dateTime.HasValue)
             {
                 return string.Empty;
             }
 
-            return dateTime.Value.ToClaimTaiwanDate();
+            return dateTime.Value.ToClaimTaiwanDate(OutputSeparateLine);
         }
 
         /// <summary>
@@ -127,6 +178,28 @@ namespace NovelDownloader.CoreBase.Help
                    dateTime.Minute.ToString("D2", CultureInfo.CurrentCulture)
                    );
         }
+        /// <summary>
+        /// 民國年月日時分秒(yyyMMddHHmmss)
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static string ToClaimTaiwanDateTimeHHmmss(this DateTime dateTime)
+        {
+            if (dateTime == DateTime.MinValue)
+            {
+                return string.Empty;
+            }
+
+            return string.Format(
+                CultureInfo.CurrentCulture, "{0}{1}{2}{3}{4}{5}",
+                dateTime.ToClaimTaiwanYearNumber(),
+                dateTime.Month.ToString("D2", CultureInfo.CurrentCulture),
+                dateTime.Day.ToString("D2", CultureInfo.CurrentCulture),
+                dateTime.Hour.ToString("D2", CultureInfo.CurrentCulture),
+                dateTime.Minute.ToString("D2", CultureInfo.CurrentCulture),
+                dateTime.Second.ToString("D2", CultureInfo.CurrentCulture)
+            );
+        }
 
         /// <summary>
         /// 民國年月日時分(yyyMMddHHmm)
@@ -141,6 +214,20 @@ namespace NovelDownloader.CoreBase.Help
             }
 
             return dateTime.Value.ToClaimTaiwanDateTimeHHmm();
+        }
+        /// <summary>
+        /// 民國年月日時分秒(yyyMMddHHmmss)
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static string ToClaimTaiwanDateTimeHHmmss(this DateTime? dateTime)
+        {
+            if (!dateTime.HasValue)
+            {
+                return string.Empty;
+            }
+
+            return dateTime.Value.ToClaimTaiwanDateTimeHHmmss();
         }
 
         /// <summary>
@@ -306,7 +393,9 @@ namespace NovelDownloader.CoreBase.Help
         /// <returns></returns>
         public static DateTime getDateEnd(this DateTime dateTime)
         {
-            return dateTime.Date.AddDays(1).AddSeconds(-1);
+            // 因為 Oracle 好像會吃到毫秒之類的更細的細節，為了保險起見，從-1秒，變-1Ticks
+            // 時間就會變成 23:59:59.9999999
+            return dateTime.Date.AddDays(1).AddTicks(-1);
         }
 
         /// <summary>
@@ -322,6 +411,34 @@ namespace NovelDownloader.CoreBase.Help
             }
 
             return dateTime.Value.getDateEnd();
+        }
+
+        /// <summary>
+        /// 去掉毫秒
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static DateTime getDateToSec(this DateTime dateTime)
+        {
+            string[] format = { "yyyy/MM/dd HH:mm" };
+            DateTime.TryParseExact(dateTime.ToFullDateTime(), format, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dt);
+
+            return dt;
+        }
+
+        /// <summary>
+        /// 去掉毫秒
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static DateTime? getDateToSec(this DateTime? dateTime)
+        {
+            if (dateTime == null)
+            {
+                return dateTime;
+            }
+
+            return dateTime.Value.getDateToSec();
         }
 
         /// <summary>
@@ -363,7 +480,7 @@ namespace NovelDownloader.CoreBase.Help
         }
 
         /// <summary>
-        /// 健保年齡計算
+        /// 健保年齡計算(精確到月)
         /// Example: 2018/05/05 ~ 2019/05/01 => (0, 11, 26)
         /// Example: 2018/05/05 ~ 2019/05/05 => (1, 0, 0)
         /// </summary>
@@ -433,41 +550,172 @@ namespace NovelDownloader.CoreBase.Help
         /// <returns>(年, 月, 日)</returns>
         public static (int years, int months, int days) ConvertToNHIAges(this DateTime birthday, DateTime specificDate, string returnUnit)
         {
-            int enoughOneMonthDays = 30; // 足月天數
-            int enoughOneYearMonths = 12; // 足年月數
+	        int enoughOneMonthDays = 30; // 足月天數
+	        int enoughOneYearMonths = 12; // 足年月數
 
-            int birthdayYear = birthday.Year;
-            int birthdayMonth = birthday.Month;
-            int birthdayDay = birthday.Day;
+	        int birthdayYear = birthday.Year;
+	        int birthdayMonth = birthday.Month;
+	        int birthdayDay = birthday.Day;
 
-            int specificYear = specificDate.Year;
-            int specificMonth = specificDate.Month;
-            int specificDay = specificDate.Day;
+	        int specificYear = specificDate.Year;
+	        int specificMonth = specificDate.Month;
+	        int specificDay = specificDate.Day;
+
+	        int resultYear = 0;
+	        int resultMonth = 0;
+	        int resultDay = 0;
+
+	        // 年月日相減
+	        resultYear = specificYear - birthdayYear;
+	        resultMonth = specificMonth - birthdayMonth;
+	        resultDay = specificDay - birthdayDay;
+
+	        // 天數不足 則往前借一個月
+	        if (resultDay < 0)
+	        {
+		        resultDay += enoughOneMonthDays;
+		        resultMonth--;
+	        }
+
+	        // 月份不足 則往前借一年
+	        if (resultMonth < 0)
+	        {
+		        resultMonth += enoughOneYearMonths;
+		        resultYear--;
+	        }
+
+	        return (resultYear, resultMonth, resultDay);
+        }
+
+        /// <summary>
+        /// 健保年齡計算(精確到日)
+        /// Example: 2018/05/05 ~ 2019/05/01 => (0, 11, 26)
+        /// Example: 2018/05/05 ~ 2019/05/05 => (1, 0, 1)
+        /// </summary>
+        /// <param name="birthday">生日</param>
+        /// <param name="specificDate">指定日期</param>
+        /// <returns>(年, 月, 日)</returns>
+        public static (int years, int months, int days) ConvertToNHIAgesToDay(this DateTime birthday, DateTime specificDate)
+        {
+            int enoughOneYearDays = 365; // 一年365天
+            int enoughSixMonthDays = 180; // 六個月180天
+            int enoughOneMonthDays = 30; // 一個月30天
 
             int resultYear = 0;
             int resultMonth = 0;
             int resultDay = 0;
 
-            // 年月日相減
-            resultYear = specificYear - birthdayYear;
-            resultMonth = specificMonth - birthdayMonth;
-            resultDay = specificDay - birthdayDay;
+            // 使用 年定義的天數 去計算 共有幾年及剩餘天數
+            var getTimeResult = getTimes((specificDate.getDateStart() - birthday.getDateStart()).Days, enoughOneYearDays, resultYear);
+            // 取得總共幾歲
+            resultYear = getTimeResult.times;
 
-            // 天數不足 則往前借一個月
-            if (resultDay < 0)
+            // 使用 六個月定義的天數 去計算 是否有滿六個月及剩餘天數
+            getTimeResult = getTimes(getTimeResult.days, enoughSixMonthDays, resultMonth);
+            if (getTimeResult.times > 0)
             {
-                resultDay += enoughOneMonthDays;
-                resultMonth--;
+                // 只能計算一次滿六個月
+                resultMonth = 6;
+
+                // 如果滿二次六個月必須要歸還剩餘天數
+                if (getTimeResult.times == 2)
+                {
+                    getTimeResult.days += enoughSixMonthDays;
+                }
             }
 
-            // 月份不足 則往前借一年
-            if (resultMonth < 0)
+            // 使用 一個月定義的天數 報計算 是否有滿一個月及剩餘天數
+            getTimeResult = getTimes(getTimeResult.days, enoughOneMonthDays, resultMonth);
+            resultMonth = getTimeResult.times;
+
+            // 如果為12個月，則須進行特殊處理
+            if (resultMonth == 12)
             {
-                resultMonth += enoughOneYearMonths;
-                resultYear--;
+                // 因為 12個月應該要進位，但未滿365日，所以需進行微調
+                var days = 360 + getTimeResult.days;
+                resultMonth = 11;
+                resultDay = new DateTime(2023, 1, 1).AddDays(days).AddDays(-2).Day;
+            }
+            else
+            {
+                // 將剩餘天數 回傳
+                resultDay = getTimeResult.days;
             }
 
             return (resultYear, resultMonth, resultDay);
+        }
+
+        /// <summary>
+        /// 健保年齡計算(精確到年)
+        /// Example: 2018/05/05 ~ 2019/05/01 => (1, X, X)
+        /// Example: 2018/05/05 ~ 2019/05/05 => (1, X, X)
+        /// </summary>
+        /// <param name="birthday">生日</param>
+        /// <param name="specificDate">指定日期</param>
+        /// <returns>(年, 月, 日)</returns>
+        public static int ConvertToNHIAgesToYear(this DateTime birthday, DateTime specificDate)
+        {
+            int birthdayYear = birthday.Year;
+            int specificYear = specificDate.Year;
+
+            int resultYear = 0;
+            resultYear = specificYear - birthdayYear;
+
+            return resultYear;
+        }
+
+        /// <summary>
+        /// 遞回計算能算幾次
+        /// </summary>
+        /// <param name="totalDays"></param>
+        /// <param name="specificDays"></param>
+        /// <param name="times"></param>
+        /// <returns></returns>
+        private static (int times, int days) getTimes(int totalDays, int specificDays, int times)
+        {
+            var resultTimes = times;
+            var resultDays = totalDays;
+
+            // 如果總天數 大於 差異天數
+            if (totalDays >= specificDays)
+            {
+                // 次數 + 1
+                resultTimes += 1;
+                // 剩餘天數 為 總天數 減 定義天數
+                resultDays = totalDays - specificDays;
+
+                // 如果剩餘天數 大於 差異天數
+                // 進遞迴
+                if (resultDays >= specificDays)
+                {
+                    var result = getTimes(resultDays, specificDays, resultTimes);
+                    resultTimes = result.times;
+                    resultDays = result.days;
+                }
+            }
+
+            // 回傳次數 及 剩餘天數
+            return (resultTimes, resultDays);
+        }
+
+        /// <summary>
+        /// 取得當年最後一天
+        /// </summary>
+        /// <param name="dateTime">DateTime</param>
+        /// <returns></returns>
+        public static DateTime getYearLastDay(this DateTime dateTime)
+        {            
+            return new DateTime(dateTime.Year, 12, 31);
+        }
+
+        /// <summary>
+        /// 取得當年第一天
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static DateTime getYearFirstDay(this DateTime dateTime)
+        {
+            return new DateTime(dateTime.Year, 1, 1);
         }
     }
 }
